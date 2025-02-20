@@ -1,0 +1,219 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "babylon.js glTF exporter for 3dsmax 2024 v20241219.2"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0,
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "translation": [
+        0.122766681,
+        0.0,
+        0.180093065
+      ],
+      "name": "Shape1"
+    },
+    {
+      "mesh": 1,
+      "translation": [
+        0.0235880334,
+        0.0135531528,
+        0.149835125
+      ],
+      "name": "Sphere001"
+    },
+    {
+      "translation": [
+        -0.01778106,
+        0.12767902,
+        0.319831818
+      ],
+      "rotation": [
+        -0.707106769,
+        0.0,
+        0.0,
+        0.707106769
+      ],
+      "name": "Omni001"
+    },
+    {
+      "translation": [
+        0.228941858,
+        0.05709729,
+        0.127211034
+      ],
+      "rotation": [
+        -0.707106769,
+        0.0,
+        0.0,
+        0.707106769
+      ],
+      "name": "Omni002"
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 1,
+            "NORMAL": 2,
+            "TEXCOORD_0": 3
+          },
+          "indices": 0,
+          "material": 0
+        }
+      ],
+      "name": "Shape1"
+    },
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 5,
+            "NORMAL": 6,
+            "TEXCOORD_0": 7
+          },
+          "indices": 4
+        }
+      ],
+      "name": "Sphere001"
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 116016,
+      "type": "SCALAR",
+      "name": "accessorIndices"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 76778,
+      "max": [
+        0.159608781,
+        0.0052000056,
+        0.09311131
+      ],
+      "min": [
+        -0.1543831,
+        0.0,
+        -0.08942918
+      ],
+      "type": "VEC3",
+      "name": "accessorPositions"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 921336,
+      "componentType": 5126,
+      "count": 76778,
+      "type": "VEC3",
+      "name": "accessorNormals"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 76778,
+      "type": "VEC2",
+      "name": "accessorUVs"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 464064,
+      "componentType": 5123,
+      "count": 2880,
+      "type": "SCALAR",
+      "name": "accessorIndices"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 1842672,
+      "componentType": 5126,
+      "count": 559,
+      "max": [
+        0.00545663526,
+        0.006853241,
+        -1.32463756E-05
+      ],
+      "min": [
+        -0.00543955434,
+        -0.006853242,
+        -0.00363907125
+      ],
+      "type": "VEC3",
+      "name": "accessorPositions"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 1849380,
+      "componentType": 5126,
+      "count": 559,
+      "type": "VEC3",
+      "name": "accessorNormals"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 614224,
+      "componentType": 5126,
+      "count": 559,
+      "type": "VEC2",
+      "name": "accessorUVs"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 469824,
+      "name": "bufferViewScalar"
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 469824,
+      "byteLength": 1856088,
+      "byteStride": 12,
+      "name": "bufferViewFloatVec3"
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 2325912,
+      "byteLength": 618696,
+      "byteStride": 8,
+      "name": "bufferViewFloatVec2"
+    }
+  ],
+  "buffers": [
+    {
+      "uri": "mapa.bin",
+      "byteLength": 2944608
+    }
+  ],
+  "materials": [
+    {
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.5859731,
+          0.00293231825,
+          0.00293231825,
+          1.0
+        ],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.3048167
+      },
+      "name": "03 - Default"
+    }
+  ]
+}
