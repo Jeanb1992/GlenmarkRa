@@ -1,7 +1,7 @@
 {
   "name": "Glenmark RA",
   "short_name": "Glenmark RA",
-  "start_url": "/",
+  "start_url": "/GlenmarkRa/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
