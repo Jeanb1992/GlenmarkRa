@@ -564,6 +564,14 @@
         }
       };
 
+      exampleTarget.addEventListener("targetFound", event => {
+        console.log("target encontrado");
+        document.querySelector('#presentation').setAttribute('visible', true);
+        
+        // Estabilizar después de 1 segundo
+        setTimeout(stabilizePresentation, 1000);
+      });
+
       exampleTarget.addEventListener("targetLost", event => {
         console.log("target perdido");
         if (presentationStabilized) {
@@ -572,22 +580,6 @@
           if (arSystem) {
             arSystem.start();
           }
-        }
-      });
-
-      // Agregar un nuevo event listener para cuando se vuelve a encontrar el target
-      exampleTarget.addEventListener("targetFound", event => {
-        console.log("target encontrado");
-        document.querySelector('#presentation').setAttribute('visible', true);
-        
-        // Si ya se encontró el target antes y el tracking está activo
-        if (targetFound && !presentationStabilized) {
-          setTimeout(stabilizePresentation, 1000);
-        } 
-        // Si es la primera vez que se encuentra el target
-        else if (!targetFound) {
-          targetFound = true;
-          setTimeout(stabilizePresentation, 1000);
         }
       });
 
