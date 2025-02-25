@@ -459,31 +459,75 @@
       }
     }
 
-    // Mover los event listeners de navegación fuera de setupClickableElements
+    // Modificar la función setupNavigationButtons
     const setupNavigationButtons = () => {
+      const prevButton = document.querySelector('#prev-button');
+      const nextButton = document.querySelector('#next-button');
+
+      // Función para mostrar/ocultar los botones de navegación
+      const toggleNavigationButtons = (screenNumber) => {
+        // Lista de screens donde no queremos mostrar los botones de navegación
+        const hideNavigationScreens = [5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16];
+        
+        if (hideNavigationScreens.includes(screenNumber)) {
+          prevButton.setAttribute('visible', false);
+          nextButton.setAttribute('visible', false);
+        } else {
+          prevButton.setAttribute('visible', true);
+          nextButton.setAttribute('visible', true);
+        }
+      };
+
+      // Agregar la lógica de toggle a la función showScreen existente
+      const originalShowScreen = window.showScreen;
+      window.showScreen = function(screenNumber) {
+        originalShowScreen(screenNumber);
+        toggleNavigationButtons(screenNumber);
+      };
+
       // Usar delegación de eventos para los botones de navegación
       document.addEventListener('click', function(e) {
         if (e.target.matches('#prev-button, #prev-button *')) {
           e.preventDefault();
           e.stopPropagation();
-          if (currentScreen > 2) {
+          // Si estamos en la screen 11, volver a la screen 4
+          if (currentScreen === 11) {
+            showScreen(4);
+          }
+          // Si estamos en la screen 17, volver a la screen 11
+          else if (currentScreen === 17) {
+            showScreen(11);
+          }
+          else if (currentScreen > 2) {
             showScreen(currentScreen - 1);
           }
         }
         if (e.target.matches('#next-button, #next-button *')) {
           e.preventDefault();
           e.stopPropagation();
-          if (currentScreen < totalScreens) {
+          // Si estamos en la screen 4, saltar a la screen 11
+          if (currentScreen === 4) {
+            showScreen(11);
+          }
+          // Si estamos en la screen 11, saltar a la screen 17
+          else if (currentScreen === 11) {
+            showScreen(17);
+          }
+          else if (currentScreen < totalScreens) {
             showScreen(currentScreen + 1);
           }
         }
       });
+
+      // Inicializar el estado de los botones para la primera pantalla
+      toggleNavigationButtons(currentScreen);
     };
 
     document.addEventListener("DOMContentLoaded", function() {
       const sceneEl = document.querySelector('a-scene');
       let arSystem;
       let targetFound = false;
+      let presentationStabilized = false;
       
       sceneEl.addEventListener('loaded', function () {
         arSystem = sceneEl.systems["mindar-image-system"];
@@ -496,26 +540,87 @@
 
       // Configurar target
       const exampleTarget = document.querySelector('#example-target');
-      exampleTarget.addEventListener("targetFound", event => {
-        console.log("target encontrado");
-        if (!targetFound) {
-          document.querySelector('#presentation').setAttribute('visible', true);
-          targetFound = true;
+      
+      // Función para estabilizar la presentación
+      const stabilizePresentation = () => {
+        if (arSystem) {
+          // Pausar el tracking de AR
+          arSystem.pause();
+          presentationStabilized = true;
+          
+          // Fijar la posición del target
+          const worldPosition = new THREE.Vector3();
+          const worldRotation = new THREE.Quaternion();
+          exampleTarget.object3D.getWorldPosition(worldPosition);
+          exampleTarget.object3D.getWorldQuaternion(worldRotation);
+          
+          // Aplicar la posición fija
+          exampleTarget.setAttribute('position', worldPosition);
+          exampleTarget.setAttribute('rotation', {
+            x: THREE.MathUtils.radToDeg(worldRotation.x),
+            y: THREE.MathUtils.radToDeg(worldRotation.y),
+            z: THREE.MathUtils.radToDeg(worldRotation.z)
+          });
+        }
+      };
+
+      exampleTarget.addEventListener("targetLost", event => {
+        console.log("target perdido");
+        if (presentationStabilized) {
+          // Reactivar el tracking cuando se pierde el target
+          presentationStabilized = false;
+          if (arSystem) {
+            arSystem.start();
+          }
         }
       });
 
-      // Registrar Service Worker
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-              console.log('ServiceWorker registrado');
-            })
-            .catch(error => {
-              console.log('Error al registrar ServiceWorker:', error);
-            });
-        });
-      }
+      // Agregar un nuevo event listener para cuando se vuelve a encontrar el target
+      exampleTarget.addEventListener("targetFound", event => {
+        console.log("target encontrado");
+        document.querySelector('#presentation').setAttribute('visible', true);
+        
+        // Si ya se encontró el target antes y el tracking está activo
+        if (targetFound && !presentationStabilized) {
+          setTimeout(stabilizePresentation, 1000);
+        } 
+        // Si es la primera vez que se encuentra el target
+        else if (!targetFound) {
+          targetFound = true;
+          setTimeout(stabilizePresentation, 1000);
+        }
+      });
+
+      // Agregar botón para reactivar el tracking manualmente si es necesario
+      const reactivateButton = document.createElement('button');
+      reactivateButton.textContent = 'Reactivar Tracking';
+      reactivateButton.style.position = 'fixed';
+      reactivateButton.style.bottom = '20px';
+      reactivateButton.style.left = '50%';
+      reactivateButton.style.transform = 'translateX(-50%)';
+      reactivateButton.style.padding = '10px 20px';
+      reactivateButton.style.display = 'none';
+      document.body.appendChild(reactivateButton);
+
+      reactivateButton.addEventListener('click', () => {
+        if (arSystem && presentationStabilized) {
+          arSystem.start();
+          presentationStabilized = false;
+          reactivateButton.style.display = 'none';
+        }
+      });
+
+      // Mostrar el botón de reactivar cuando la presentación está estabilizada
+      const showReactivateButton = () => {
+        if (presentationStabilized) {
+          reactivateButton.style.display = 'block';
+        } else {
+          reactivateButton.style.display = 'none';
+        }
+      };
+
+      // Observar cambios en presentationStabilized
+      setInterval(showReactivateButton, 1000);
     });
 
     // Agregar este nuevo componente antes del screen-animation
@@ -702,12 +807,12 @@
         src="./src/assets/3d/archivos gltf/esfera-inicio.gltf"></a-asset-item>
     </a-assets>
 
-    <a-camera position="0 1.5 0" rotation="-15 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="far: 10000; objects: .clickable">
+    <a-camera position="0 1.5 0" rotation="-8 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="far: 10000; objects: .clickable">
     </a-camera>
 
     <a-entity id="example-target" mindar-image-target="targetIndex: 0">
       <!-- Plano blanco de fondo para toda la presentación -->
-      <a-plane color="white" position="0.05 -0.45 -1" width="1.5" height="1.2" material="shader: flat; opacity: 0.7" scale="1.5 1.5 1.5" geometry="">
+      <a-plane color="white" position="0.1 -0.6 -1" width="1.4" height="1.2" material="shader: flat; opacity: 0.8" scale="1.5 1.5 1.5" geometry="">
       </a-plane>
 
       <a-entity id="presentation" position="0 -0.5 -0.5" scale="1.5 1.5 1.5">
@@ -900,7 +1005,7 @@
         <a-entity id="screen19" visible="false">
           <a-plane 
             src="#recurso28" 
-            position="0.28 -0.03 0.4" 
+            position="0.28 0.1 0.4" 
             auto-ratio="width: 0.1; maxWidth: 4"
             material="shader: flat; transparent: true; opacity: 1; alphaTest: 0.99" 
             scale="1 1 1"></a-plane>
@@ -914,7 +1019,7 @@
         <a-entity id="screen20" visible="false">
           <a-plane 
             src="#recurso28" 
-            position="0.28 -0.03 0.4" 
+            position="0.28 0.1 0.4" 
             auto-ratio="width: 0.1; maxWidth: 4"
             material="shader: flat; transparent: true; opacity: 1; alphaTest: 0.99" 
             scale="1 1 1"></a-plane>
