@@ -82,6 +82,13 @@
       const container = document.getElementById(containerId);
       if (!container) return;
 
+      // Función para calcular escala relativa
+      function calculateRelativeScale(baseScale) {
+        const containerWidth = container.clientWidth;
+        const baseWidth = 1024; // Ancho base de diseño
+        return (containerWidth / baseWidth) * baseScale;
+      }
+
       // Crear el renderer con configuración básica
       const renderer = new THREE.WebGLRenderer({
         antialias: true,
@@ -168,14 +175,18 @@
             const model = gltf.scene;
             
             if (options.scale) {
-              model.scale.set(options.scale, options.scale, options.scale);
+              // Convertir la escala a relativa
+              const relativeScale = calculateRelativeScale(options.scale);
+              model.scale.set(relativeScale, relativeScale, relativeScale);
             }
             
             if (options.position) {
+              // Ajustar posiciones relativamente también
+              const positionScale = container.clientWidth / 1024;
               model.position.set(
-                options.position.x || 0,
-                options.position.y || 0,
-                options.position.z || 0
+                (options.position.x || 0) * positionScale,
+                (options.position.y || 0) * positionScale,
+                (options.position.z || 0)
               );
             }
 
@@ -352,189 +363,141 @@
       switch(screenNumber) {
         case 2:
           setupModel('model-boton-comenzar', './src/assets/3d/gltf/esfera-inicio.gltf', {
-            scale: 13,
-            position: { x: -1.6, y: -1.4, z: 5 },
+            scale: 270.0,
+            position: { x: -30, y: -30, z: 0.5 },
             rotation: { x: 0, y: 0, z: 0 },
             clickable: true,
             cameraZ: 12,
-            onClick: () => showScreen(3),
-            onLoad: (model) => {
-              model.traverse((child) => {
-                if (child.isMesh) {
-                  child.castShadow = true;
-                  child.receiveShadow = true;
-                  if (child.material) {
-                    child.material.needsUpdate = true;
-                    child.material.side = THREE.DoubleSide;
-                    child.material.metalness = 0.3;
-                    child.material.roughness = 0.7;
-                    child.material.envMapIntensity = 0.8;
-                  }
-                }
-              });
-            }
+            onClick: () => showScreen(3)
           });
           break;
         case 3:
           setupModel('model-esfera-inicial', './src/assets/3d/gltf/esfera-inicial-estatica.gltf', {
-            scale: 20,
-            position: { x: -2.7, y: -1.7, z: 0 },
+            scale: 270.0, // Aumentado de 2.0 a 20.0
+            position: { x: -35, y: -23, z: 0 },
             rotation: { x: 0, y: 0, z: 0 },
-            
-            cameraZ: 20,
-           
-            onLoad: (model) => {
-              model.traverse((child) => {
-                if (child.isMesh) {
-                  child.castShadow = true;
-                  child.receiveShadow = true;
-                  if (child.material) {
-                    child.material.needsUpdate = true;
-                    child.material.side = THREE.DoubleSide;
-                    child.material.metalness = 0.3;
-                    child.material.roughness = 0.7;
-                    child.material.envMapIntensity = 0.8;
-                  }
-                }
-              });
-            }
+            cameraZ: 20
           });
           break;
         case 4:
           setupModel('model-menu-inicial', './src/assets/3d/gltf/menu-inicial-animacion.gltf', {
-            scale: 14.5,
-            position: { x: -2.03, y: -1.2, z: 0 },
+            scale: 155, // Aumentado de 1.45 a 14.5
+            position: { x: -22, y: -15, z: 0 },
             rotation: { x: 0, y: 0, z: 0 },
             cameraZ: 20,
-            animate: true,
-            onLoad: (model) => {
-              model.traverse((child) => {
-                if (child.isMesh) {
-                  child.castShadow = true;
-                  child.receiveShadow = true;
-                  if (child.material) {
-                    child.material.needsUpdate = true;
-                    child.material.side = THREE.DoubleSide;
-                    child.material.metalness = 0.2;
-                    child.material.roughness = 0.5;
-                    child.material.envMapIntensity = 2.0;
-                  }
-                }
-              });
-            }
+            animate: true
           });
           break;
         case 5:
           setupModel('model-glenmark', './src/assets/3d/gltf/boton-glenmark-animacion.gltf', {
-            scale: 18,
-            position: { x: -1.5, y: -2.3, z: 0 },
+            scale: 70.0, // Aumentado de 1.8 a 18.0
+            position: { x: -6, y: -8, z: 0 },
             animate: true
           });
           break;
         case 6:
           setupModel('model-vision', './src/assets/3d/gltf/boton-vision-animacion.gltf', {
-            scale: 18,
-            position: { x: -2.5, y: -2.2, z: 0 },
+            scale: 70.0, // Aumentado de 1.8 a 18.0
+            position: { x: -12, y: -10, z: 0 },
             animate: true
           });
           break;
         case 7:
           setupModel('model-biotecnologia', './src/assets/3d/gltf/boton-biotecnologia-animacion.gltf', {
-            scale: 18,
-            position: { x: -2.5, y: -2.2, z: 0 },
+            scale: 70.0, // Aumentado de 1.8 a 18.0
+            position: { x: -10, y: -8, z: 0 },
             animate: true
           });
           break;
         case 8:
           setupModel('model-cadena', './src/assets/3d/gltf/boton-cadena-animacion.gltf', {
-            scale: 18,
-            position: { x: -2.5, y: -2.2, z: 0 },
+            scale: 70.0, // Aumentado de 1.8 a 18.0
+            position: { x: -12, y: -9.5, z: 0 },
             animate: true
           });
           break;
         case 9:
           setupModel('model-investigacion', './src/assets/3d/gltf/boton-investigacion-animacion.gltf', {
-            scale: 18,
-            position: { x: -2.5, y: -2.2, z: 0 },
+            scale: 70.0, // Aumentado de 1.8 a 18.0
+            position: { x: -9, y: -9, z: 0 },
             animate: true
           });
           break;
         case 10:
           setupModel('model-operaciones', './src/assets/3d/gltf/boton-operaciones-animacion.gltf', {
-            scale: 18,
-            position: { x: -2.5, y: -2.2, z: 0 },
+            scale: 70.0, // Aumentado de 1.8 a 18.0
+            position: { x: -9, y: -8.5  , z: 0 },
             animate: true
           });
           setupModel('model-mapa', './src/assets/3d/gltf/mapa-animado.gltf', {
-            scale: 15,
-            position: { x: -2, y: 3.8, z: 0 },
+            scale: 40.0, // Aumentado de 1.5 a 15.0
+            position: { x: -5, y: 10, z: 0 },
             rotation: { x: 0.9, y: 0, z: 0 },
             animate: true,
             cameraZ: 10
           });
           break;
         case 11:
-          // Primero configurar el fondo
           setupModel('model-menu2', './src/assets/3d/gltf/menu2-animacion.gltf', {
-            scale: 28,
-            position: { x: -3.5, y: -2, z: -5 },
+            scale: 35.0, // Aumentado de 2.8 a 28.0
+            position: { x: -4, y: -3, z: -0.5 },
             animate: true
           });
           break;
         case 12:
           setupModel('model-plantas', './src/assets/3d/gltf/boton-esfera-plantas-animacion.gltf', {
-            scale: 6,
-            position: { x: -0.8, y: -0.75, z: 0 },
+            scale: 60.0, // Aumentado de 0.6 a 6.0
+            position: { x: -8.5, y: -8, z: 0 },
             animate: true
           });
           break;
         case 13:
           setupModel('model-pharma', './src/assets/3d/gltf/boton-esfera-investigacion-animacion.gltf', {
-            scale: 4.5 ,
-            position: { x: -0.45, y: -0.4, z: 0 },
+            scale: 60, // Aumentado de 0.45 a 4.5
+            position: { x: -6.5, y: -5, z: 0 },
             animate: true
           });
           break;
         case 14:
           setupModel('model-investigacion2', './src/assets/3d/gltf/boton-engranaje-investigacion-animacion.gltf', {
-            scale: 6,
-            position: { x: -1, y: -0.55 , z: 0 },
+            scale: 60, // Aumentado de 0.6 a 6.0
+            position: { x: -9, y: -6.5, z: 0 },
             animate: true
           });
           break;
         case 15:
           setupModel('model-engranaje', './src/assets/3d/gltf/boton-engranaje-pharma-animacion.gltf', {
-            scale: 6,
-            position: { x: -0.8, y: -0.7, z: 0 },
+            scale: 60, // Aumentado de 0.6 a 6.0
+            position: { x: -8, y: -7, z: 0 },
             animate: true
           });
           break;
         case 16:
           setupModel('model-microscopio', './src/assets/3d/gltf/boton-engranaje-microscopio-animacion.gltf', {
-            scale: 6,
-            position: { x: -0.7, y: -0.5, z: 0 },
+            scale: 60, // Aumentado de 0.6 a 6.0
+            position: { x: -6, y: -5, z: 0 },
             animate: true
           });
           break;
         case 17:
           setupModel('model-grafico', './src/assets/3d/gltf/grafico-barras-animado.gltf', {
-            scale: 5,
-            position: { x: -0.75, y: -0.5, z: 0 },
+            scale: 70, // Aumentado de 0.5 a 5.0
+            position: { x: -10, y: -7, z: 0 },
             rotation: { x: 0, y: -(Math.PI * -30) / 180, z: 0 },
             animate: true
           });
           break;
         case 19:
           setupModel('model-cajas', './src/assets/3d/gltf/cajas.gltf', {
-            scale: 4,
-            position: { x: -0.5, y: -0.5, z: 0 },
+            scale: 40, // Aumentado de 0.4 a 4.0
+            position: { x: -5, y: -4.5, z: 0 },
             animate: true
           });
           break;
         case 20:
           setupModel('model-cajas2', './src/assets/3d/gltf/cajas.gltf', {
-            scale: 4,
-            position: { x: -0.5, y: -0.5, z: 0 },
+            scale: 40, // Aumentado de 0.4 a 4.0
+            position: { x: -5, y: -4.5, z: 0 },
             animate: true
           });
           break;
@@ -607,7 +570,7 @@
         } else if (currentScreen === 4) {
           nextButton.onclick = () => showScreen(11);
         } else if (currentScreen === 11) {
-          nextButton.onclick = () => showScreen(18);
+          nextButton.onclick = () => showScreen(17);
         } else {
           nextButton.onclick = nextScreen;
         }
@@ -720,30 +683,15 @@
             // Luego cargar el modelo con un pequeño retraso para asegurar que el contenedor esté listo
             setTimeout(() => {
               setupModel('model-boton-comenzar', './src/assets/3d/gltf/esfera-inicio.gltf', {
-                scale: 13,
-                position: { x: -1.6, y: -1.4, z: 5 },
+                scale: 270.0,
+                position: { x: -30, y: -30, z: 0.5 },
                 rotation: { x: 0, y: 0, z: 0 },
                 clickable: true,
                 cameraZ: 12,
-                onClick: () => showScreen(3),
-                onLoad: (model) => {
-                  model.traverse((child) => {
-                    if (child.isMesh) {
-                      child.castShadow = true;
-                      child.receiveShadow = true;
-                      if (child.material) {
-                        child.material.needsUpdate = true;
-                        child.material.side = THREE.DoubleSide;
-                        child.material.metalness = 0.3;
-                        child.material.roughness = 0.7;
-                        child.material.envMapIntensity = 0.8;
-                      }
-                    }
-                  });
-                }
+                onClick: () => showScreen(3)
               });
-            }, 100);
-          }, 1000); // Retraso de 1 segundo
+            }, 500); // Aumentado el tiempo de espera para asegurar que el contenedor esté listo
+          }, 1000);
         }
       });
     }
@@ -862,8 +810,9 @@
 
     /* Contenedor principal */
     .contenedor {
-        width: 1024px;
-        height: 768px;
+        width: 100%;
+        max-width: 90vw;
+        height: 90vh;
         position: relative;
         margin: 0 auto;
         overflow: hidden;
@@ -954,19 +903,16 @@
 
     .model-wrapper {
         position: absolute;
-        width: 200px;
-        height: 200px;
+        width: 100%;
+        height: 100%;
         pointer-events: none;
         cursor: default;
     }
 
     .model-3d {
-        position: absolute;
         width: 100%;
         height: 100%;
-        z-index: 2;
-        pointer-events: auto;
-        cursor: default;
+        position: relative;
     }
 
     .model-3d[onclick] {
@@ -975,15 +921,15 @@
 
     .nav-buttons {
         position: absolute;
-        bottom: 4%;
-        right: -15%;
+        bottom: 3vh;
+        right: 4%;
         display: flex;
-        gap: 10px;
+        gap: 2vw;
         z-index: 1000;
     }
 
     .nav-button {
-        width: 10%;
+        width: 2vw;
         height: auto;
         cursor: pointer;
         transition: transform 0.2s;
@@ -1001,9 +947,10 @@
 
     .return-button {
         position: absolute;
-        top: 20px;
-        right: 20px;
-        width: 10px;
+        top: 2vh;
+        right: 2vw;
+        width: 3vw;
+        min-width: 5%;
         cursor: pointer;
         transition: transform 0.2s;
         z-index: 100;
@@ -1040,12 +987,11 @@
     #screen6-image {
     padding-left: 5%;}
     #screen11-image {
-      width: 110%;
-      height: 117%;
+      width: 100%;
+      height: auto;
     }
     #screen13-image {      
-      padding-top: 35px;
-     
+      padding-top: 14vh;
     }
     
 
@@ -1073,15 +1019,16 @@
     /* Posiciones para los modelos del menú principal */
     #model-menu-inicial-wrapper {
         position: absolute;
-        width: 800px;
-        height: 800px;
+        width: 80vw;
+        height: 80vw;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         z-index: 1;
     }
     .menu-button {
-      width: 30%
+      width: 8vw;
+      min-width: 27px;
     }
 
     #model-menu-inicial-wrapper canvas {
@@ -1097,8 +1044,8 @@
     #model-vision-btn-wrapper,
     #model-glenmark-btn-wrapper {
         position: absolute;
-        width: 300px;
-        height: 300px;
+        width: 30vw;
+        height: 30vw;
         transform: translate(-50%, -50%);
         z-index: 2;
     }
@@ -1192,8 +1139,8 @@
         top: 72%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 120%;
-        height: 120%;
+        width: 80vw;
+        height: 80vw;
     }
 
     /* Posiciones para los botones del menú secundario */
@@ -1201,6 +1148,8 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+        width: 90vw;
+        height: 90vw;
     }
 
     #model-plantas-btn-wrapper {
@@ -1256,8 +1205,8 @@
     /* Ajustar el wrapper del modelo de inicio */
     #model-boton-comenzar-wrapper {
         position: absolute;
-        width: 400px;
-        height: 400px;
+        width: 50vw;
+        height: 40vw;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -1279,8 +1228,8 @@
     /* Ajustar el wrapper del modelo de la screen 3 */
     #model-esfera-inicial-wrapper {
         position: absolute;
-        width: 600px;
-        height: 600px;
+        width: 60vw;
+        height: 60vw;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -1318,22 +1267,21 @@
     /* Estilos para el botón de ayuda */
     .help-button {
         position: absolute;
-        top: 90%;
-        right: 88%;
-        width: 4%;
-        height: 6%;
+        bottom: 2vh;
+        left: 2vw;
+        width: 2vw;
+        min-width: 5%;
+        height: auto;
         cursor: pointer;
         z-index: 100;
     }
 
     .help-info {
         position: absolute;
-        top: 90%;
-        left: 8%;
-        width: 4%;
-        height: 6%;
-        cursor: pointer;
-        z-index: 99;
+        bottom: 2vh;
+        left: 2vw;
+        width: 27vw;
+        height: auto;
         opacity: 0;
         transform-origin: left;
         transform: scaleX(0);
@@ -1343,8 +1291,6 @@
 
     .help-info.active {
         opacity: 1;
-        width: 36%;
-        height: 6%;
         pointer-events: auto;
         transform: scaleX(1);
     }
@@ -1401,8 +1347,8 @@
     #model-engranaje-wrapper,
     #model-microscopio-wrapper {
         position: absolute;
-        width: 600px;
-        height: 600px;
+        width: 60vw;
+        height: 60vw;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -1421,8 +1367,8 @@
     #model-cajas-wrapper,
     #model-cajas2-wrapper {
         position: absolute;
-        width: 600px;
-        height: 600px;
+        width: 60vw;
+        height: 60vw;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -1453,7 +1399,7 @@
 
     #screen18 #btn1, #screen18 #btn2 {
       position: absolute;
-      width: 15%;
+      width: 30%;
       height: auto;
       cursor: pointer;
       transition: transform 0.2s;
@@ -1463,13 +1409,11 @@
     #screen18 #btn1 {
       top: 29%;
       left: 55%;
-      width: 30%;
     }
 
     #screen18 #btn2 {
       top: 30%;
       left: 16%;
-      width: 30%;
     }
 
     #screen18 #btn1:hover, #screen18 #btn2:hover {
@@ -1477,8 +1421,8 @@
     }
     #fda {
       position: absolute;
-      top: 6px;
-      left: 186px;
+      top: 1vh;
+      left: 77%;
       width: 15%;
     }
 
@@ -1488,16 +1432,18 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 300px;
-      height: 300px;
+      width: 30vw;
+      height: 30vw;
+      min-width: 250px;
+      min-height: 250px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 1000;
       background: rgba(255, 255, 255, 0.1);
-      border: 2px solid rgba(255, 255, 255, 0.5);
-      border-radius: 20px;
+      border: 0.2vw solid rgba(255, 255, 255, 0.5);
+      border-radius: 2vw;
     }
 
     .scanner-line {
@@ -1523,13 +1469,13 @@
 
     .scanner-text {
       color: #fff;
-      margin-top: 20px;
-      font-size: 1.2em;
+      margin-top: 2vh;
+      font-size: 1.2rem;
       text-align: center;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      text-shadow: 0.2vw 0.2vw 0.4vw rgba(0,0,0,0.5);
       width: 100%;
       position: absolute;
-      bottom: -40px;
+      bottom: -4vh;
       font-weight: bold;
     }
 
@@ -1569,7 +1515,8 @@
       border-top: none;
     }
     .menu-2-button{
-      width: 10%;
+      width: 5vw;
+      min-width: 13%;
       position: absolute;
       visibility: hidden;
       opacity: 0;
@@ -1645,12 +1592,12 @@
     <div id="model-menu-inicial-wrapper" class="model-wrapper">
         <div id="model-menu-inicial" class="model-3d"></div>
     </div>
-    <img src="./src/img/Buttons/Recurso 2 (1).png" id="operaciones-btn" class="menu-button" alt="" onclick="goToOperaciones()" style="position: absolute; top: 72%; left: 56%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
-    <img src="./src/img/Buttons/Recurso 3.png" id="investigacion-btn" class="menu-button" alt="" onclick="goToInvestigacion()" style="position: absolute; top: 67%; left: 33%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
-    <img src="./src/img/Buttons/Recurso 4.png" id="cadena-btn" class="menu-button" alt="" onclick="goToCadena()" style="position: absolute; top: 37.5%; left: 25%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
-    <img src="./src/img/Buttons/Recurso 5.png" id="biotecnologia-btn" class="menu-button" alt="" onclick="goToBiotecnologia()" style="position: absolute; top: 12.5%; left: 39.5%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
-    <img src="./src/img/Buttons/Recurso 6.png" id="vision-btn" class="menu-button" alt="" onclick="goToVision()" style="position: absolute; top: 46%; left: 72.5%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
-    <img src="./src/img/Buttons/Recurso 7.png" id="glenmark-btn" class="menu-button" alt="" onclick="goToGlenmark()" style="position: absolute; top: 19%; left: 63.3%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
+    <img src="./src/img/Buttons/Recurso 2 (1).png" id="operaciones-btn" class="menu-button" alt="" onclick="goToOperaciones()" style="position: absolute; top: 82%; left: 56.5%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
+    <img src="./src/img/Buttons/Recurso 3.png" id="investigacion-btn" class="menu-button" alt="" onclick="goToInvestigacion()" style="position: absolute; top: 76%; left: 30%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
+    <img src="./src/img/Buttons/Recurso 4.png" id="cadena-btn" class="menu-button" alt="" onclick="goToCadena()" style="position: absolute; top: 41.5%; left: 20%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
+    <img src="./src/img/Buttons/Recurso 5.png" id="biotecnologia-btn" class="menu-button" alt="" onclick="goToBiotecnologia()" style="position: absolute; top: 12.5%; left: 37.5%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
+    <img src="./src/img/Buttons/Recurso 6.png" id="vision-btn" class="menu-button" alt="" onclick="goToVision()" style="position: absolute; top: 52%; left: 75.5%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
+    <img src="./src/img/Buttons/Recurso 7.png" id="glenmark-btn" class="menu-button" alt="" onclick="goToGlenmark()" style="position: absolute; top: 20%; left: 65%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
     <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(4)">
     <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-4" onclick="toggleHelp(4)">
   </div>
@@ -1751,11 +1698,11 @@
   <!-- Pantalla 11: Menú Secundario -->
   <div id="screen11" class="screen">
     <div id="menu-2">
-      <img class="menu-2-button" src="./src/img/Buttons/Recurso 9.png" alt="Menú Secundario" onclick="goToPharma()" style="top: 13%; left: 65%; z-index: 2;">
-      <img class="menu-2-button" src="./src/img/Buttons/Recurso 10.png" alt="Menú Secundario" onclick="goToPlantas()" style="top: 21.5%; left: 30.5%; z-index: 2;">
-      <img class="menu-2-button" src="./src/img/Buttons/Recurso 11 (2).png" alt="Menú Secundario" onclick="goToInvestigacion2()" style="top: 46%; left: 30.5%; width: 16%; z-index: 2;">
-      <img class="menu-2-button" src="./src/img/Buttons/Recurso 12.png" alt="Menú Secundario" onclick="goToMicroscopio()" style="top: 45.5%; left: 60%; width: 16%; z-index: 2;">
-      <img class="menu-2-button" src="./src/img/Buttons/Recurso 13.png" alt="Menú Secundario" onclick="goToEngranaje()" style="top: 37%; left: 45.5%;width: 16%; z-index: 2;">
+      <img class="menu-2-button" src="./src/img/Buttons/Recurso 9.png" alt="Menú Secundario" onclick="goToPharma()" style="top: 10.5%; left: 72%; z-index: 2;">
+      <img class="menu-2-button" src="./src/img/Buttons/Recurso 10.png" alt="Menú Secundario" onclick="goToPlantas()" style="top: 20.5%; left: 29.5%; z-index: 2;">
+      <img class="menu-2-button" src="./src/img/Buttons/Recurso 11 (2).png" alt="Menú Secundario" onclick="goToInvestigacion2()" style="top: 51%; left: 29%; width: 21%; z-index: 2;">
+      <img class="menu-2-button" src="./src/img/Buttons/Recurso 12.png" alt="Menú Secundario" onclick="goToMicroscopio()" style="top: 50.5%; left: 65.7%; width: 21%; z-index: 2;">
+      <img class="menu-2-button" src="./src/img/Buttons/Recurso 13.png" alt="Menú Secundario" onclick="goToEngranaje()" style="top: 39%; left: 47.3%;width: 21%; z-index: 2;">
     </div>
     <div id="screen11-image" class="screen-image">
         <img src="./src/img/Recurso (21).png" alt="Menú Secundario">
@@ -1871,7 +1818,7 @@
         <div id="model-cajas" class="model-3d"></div>
     </div>
     <img src="./src/img/Recurso (14).png" alt="Ayuda" class="help-button" onclick="toggleHelp(19)">
-    <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-20" onclick="toggleHelp(20)" style="top:90%; left:9.5%; width: 63%; height: 6%;">
+    <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-20" onclick="toggleHelp(20)" style="top:92%; left:5.3%; width: 65%; height: 6%;">
   </div>
 
   <div id="screen20" class="screen">
@@ -1883,7 +1830,7 @@
         <div id="model-cajas2" class="model-3d"></div>
     </div>
     <img src="./src/img/Recurso (14).png" alt="Ayuda" class="help-button" onclick="toggleHelp(20)" >
-    <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-20" onclick="toggleHelp(20)" style="top:90%; left:9.5%; width: 63%; height: 6%;">
+    <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-20" onclick="toggleHelp(20)" style="top:92%; left:5.3%; width: 13%; height: 5%;">
   </div>
 
   <div id="screen21" class="screen">
