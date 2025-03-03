@@ -85,8 +85,21 @@
       // Función para calcular escala relativa
       function calculateRelativeScale(baseScale) {
         const containerWidth = container.clientWidth;
-        const baseWidth = 1024; // Ancho base de diseño
-        return (containerWidth / baseWidth) * baseScale;
+        const containerHeight = container.clientHeight;
+        const minDimension = Math.min(containerWidth, containerHeight);
+        const baseSize = 1024; // Tamaño base de referencia
+        
+        // Calculamos la escala base
+        let scale = (minDimension / baseSize) * baseScale;
+        
+        // Establecemos límites mínimos y máximos para la escala
+        const minScale = baseScale * 0.5; // No permitir que sea menor al 50% del tamaño base
+        const maxScale = baseScale * 1.5; // No permitir que sea mayor al 150% del tamaño base
+        
+        // Aplicamos los límites
+        scale = Math.max(minScale, Math.min(scale, maxScale));
+        
+        return scale;
       }
 
       // Crear el renderer con configuración básica
@@ -181,13 +194,16 @@
             }
             
             if (options.position) {
-              // Ajustar posiciones relativamente también
-              const positionScale = container.clientWidth / 1024;
-              model.position.set(
-                (options.position.x || 0) * positionScale,
-                (options.position.y || 0) * positionScale,
-                (options.position.z || 0)
-              );
+              // Ajustar posiciones relativamente al tamaño del contenedor
+              const containerWidth = container.clientWidth;
+              const containerHeight = container.clientHeight;
+              
+              // Convertir las coordenadas a porcentajes del contenedor
+              const xPos = (options.position.x / 100) * containerWidth;
+              const yPos = (options.position.y / 100) * containerHeight;
+              const zPos = options.position.z || 0;
+              
+              model.position.set(xPos, yPos, zPos);
             }
 
             if (options.rotation) {
@@ -212,9 +228,21 @@
                 if (child.material) {
                   child.material.needsUpdate = true;
                   child.material.side = THREE.DoubleSide;
-                  child.material.metalness = 0.2;
-                  child.material.roughness = 0.5;
-                  child.material.envMapIntensity = 2.0;
+                  
+                  // Ajustar propiedades del material según el modelo
+                  const modelId = containerId.toLowerCase();
+                  if (modelId.includes('pharma') || 
+                      modelId.includes('investigacion2') || 
+                      modelId.includes('microscopio')) {
+                    child.material.metalness = 0;
+                    child.material.roughness = 1;
+                    child.material.envMapIntensity = 1.0;
+                    child.material.color.setRGB(1, 1, 1); // Reset color to white
+                  } else {
+                    child.material.metalness = 0.2;
+                    child.material.roughness = 0.5;
+                    child.material.envMapIntensity = 2.0;
+                  }
                 }
               }
             });
@@ -315,33 +343,6 @@
     window.showScreen = function(screenNumber) {
       console.log(`Navegando a la escena ${screenNumber}`);
       
-      // Ocultar los botones si estamos saliendo de la pantalla 4
-      if (currentScreen === 4) {
-        const buttons = [
-          'operaciones-btn',
-          'investigacion-btn',
-          'cadena-btn',
-          'biotecnologia-btn',
-          'vision-btn',
-          'glenmark-btn'
-        ];
-        
-        buttons.forEach(id => {
-          const button = document.getElementById(id);
-          if (button) {
-            button.classList.remove('show-buttons');
-          }
-        });
-      }
-      
-      // Ocultar los botones si estamos saliendo de la pantalla 11
-      if (currentScreen === 11) {
-        const menu2Buttons = document.querySelectorAll('.menu-2-button');
-        menu2Buttons.forEach(button => {
-          button.classList.remove('show-buttons');
-        });
-      }
-      
       // Limpiar todos los modelos 3D de la pantalla actual
       const currentScreenElement = document.querySelector(`#screen${currentScreen}`);
       if (currentScreenElement) {
@@ -363,8 +364,8 @@
       switch(screenNumber) {
         case 2:
           setupModel('model-boton-comenzar', './src/assets/3d/gltf/esfera-inicio.gltf', {
-            scale: 270.0,
-            position: { x: -30, y: -30, z: 0.5 },
+            scale: 100.0,
+            position: { x: -1.3, y: -1.1, z: 0.5 },
             rotation: { x: 0, y: 0, z: 0 },
             clickable: true,
             cameraZ: 12,
@@ -373,16 +374,16 @@
           break;
         case 3:
           setupModel('model-esfera-inicial', './src/assets/3d/gltf/esfera-inicial-estatica.gltf', {
-            scale: 270.0, // Aumentado de 2.0 a 20.0
-            position: { x: -35, y: -23, z: 0 },
+            scale: 80.0,
+            position: { x: -1, y: -0.4, z: 0 },
             rotation: { x: 0, y: 0, z: 0 },
             cameraZ: 20
           });
           break;
         case 4:
           setupModel('model-menu-inicial', './src/assets/3d/gltf/menu-inicial-animacion.gltf', {
-            scale: 155, // Aumentado de 1.45 a 14.5
-            position: { x: -22, y: -15, z: 0 },
+            scale: 58.0,
+            position: { x: -1, y: -0.3, z: 0 },
             rotation: { x: 0, y: 0, z: 0 },
             cameraZ: 20,
             animate: true
@@ -390,48 +391,48 @@
           break;
         case 5:
           setupModel('model-glenmark', './src/assets/3d/gltf/boton-glenmark-animacion.gltf', {
-            scale: 70.0, // Aumentado de 1.8 a 18.0
-            position: { x: -6, y: -8, z: 0 },
+            scale: 20.0,
+            position: { x: -0.1, y: -0.25, z: 0 },
             animate: true
           });
           break;
         case 6:
           setupModel('model-vision', './src/assets/3d/gltf/boton-vision-animacion.gltf', {
-            scale: 70.0, // Aumentado de 1.8 a 18.0
-            position: { x: -12, y: -10, z: 0 },
+            scale: 20.0,
+            position: { x: -0.23, y: -0.23, z: 0 },
             animate: true
           });
           break;
         case 7:
           setupModel('model-biotecnologia', './src/assets/3d/gltf/boton-biotecnologia-animacion.gltf', {
-            scale: 70.0, // Aumentado de 1.8 a 18.0
-            position: { x: -10, y: -8, z: 0 },
+            scale: 20.0,
+            position: { x: -0.21, y: -0.23, z: 0 },
             animate: true
           });
           break;
         case 8:
           setupModel('model-cadena', './src/assets/3d/gltf/boton-cadena-animacion.gltf', {
-            scale: 70.0, // Aumentado de 1.8 a 18.0
-            position: { x: -12, y: -9.5, z: 0 },
+            scale: 20.0,
+            position: { x: -0.1, y: -0.23, z: 0 },
             animate: true
           });
           break;
         case 9:
           setupModel('model-investigacion', './src/assets/3d/gltf/boton-investigacion-animacion.gltf', {
-            scale: 70.0, // Aumentado de 1.8 a 18.0
-            position: { x: -9, y: -9, z: 0 },
+            scale: 20.0,
+            position: { x: -0.2, y: -0.25, z: 0 },
             animate: true
           });
           break;
         case 10:
           setupModel('model-operaciones', './src/assets/3d/gltf/boton-operaciones-animacion.gltf', {
-            scale: 70.0, // Aumentado de 1.8 a 18.0
-            position: { x: -9, y: -8.5  , z: 0 },
+            scale: 20.0,
+            position: { x: -0.2, y: -0.21, z: 0 },
             animate: true
           });
           setupModel('model-mapa', './src/assets/3d/gltf/mapa-animado.gltf', {
-            scale: 40.0, // Aumentado de 1.5 a 15.0
-            position: { x: -5, y: 10, z: 0 },
+            scale: 13.0,
+            position: { x: -0.15, y: 0.3, z: 0 },
             rotation: { x: 0.9, y: 0, z: 0 },
             animate: true,
             cameraZ: 10
@@ -439,65 +440,65 @@
           break;
         case 11:
           setupModel('model-menu2', './src/assets/3d/gltf/menu2-animacion.gltf', {
-            scale: 35.0, // Aumentado de 2.8 a 28.0
-            position: { x: -4, y: -3, z: -0.5 },
+            scale: 14.0,
+            position: { x: -0.205, y: -0.08, z: 0 },
             animate: true
           });
           break;
         case 12:
           setupModel('model-plantas', './src/assets/3d/gltf/boton-esfera-plantas-animacion.gltf', {
-            scale: 60.0, // Aumentado de 0.6 a 6.0
-            position: { x: -8.5, y: -8, z: 0 },
+            scale: 20.0,
+            position: { x: -0.29, y: -0.27, z: 0 },
             animate: true
           });
           break;
         case 13:
           setupModel('model-pharma', './src/assets/3d/gltf/boton-esfera-investigacion-animacion.gltf', {
-            scale: 60, // Aumentado de 0.45 a 4.5
-            position: { x: -6.5, y: -5, z: 0 },
+            scale: 20.0,
+            position: { x: -0.2, y: -0.15, z: 0 },
             animate: true
           });
           break;
         case 14:
           setupModel('model-investigacion2', './src/assets/3d/gltf/boton-engranaje-investigacion-animacion.gltf', {
-            scale: 60, // Aumentado de 0.6 a 6.0
-            position: { x: -9, y: -6.5, z: 0 },
+            scale: 20.0,
+            position: { x: -0.3, y: -0.18, z: 0 },
             animate: true
           });
           break;
         case 15:
           setupModel('model-engranaje', './src/assets/3d/gltf/boton-engranaje-pharma-animacion.gltf', {
-            scale: 60, // Aumentado de 0.6 a 6.0
-            position: { x: -8, y: -7, z: 0 },
+            scale: 20.0,
+            position: { x: -0.25, y: -0.23, z: 0 },
             animate: true
           });
           break;
         case 16:
           setupModel('model-microscopio', './src/assets/3d/gltf/boton-engranaje-microscopio-animacion.gltf', {
-            scale: 60, // Aumentado de 0.6 a 6.0
-            position: { x: -6, y: -5, z: 0 },
+            scale: 20.0,
+            position: { x: -0.16, y: -0.18, z: 0 },
             animate: true
           });
           break;
         case 17:
           setupModel('model-grafico', './src/assets/3d/gltf/grafico-barras-animado.gltf', {
-            scale: 70, // Aumentado de 0.5 a 5.0
-            position: { x: -10, y: -7, z: 0 },
+            scale: 25.0,
+            position: { x: -0.35, y: -0.23, z: 0 },
             rotation: { x: 0, y: -(Math.PI * -30) / 180, z: 0 },
             animate: true
           });
           break;
         case 19:
           setupModel('model-cajas', './src/assets/3d/gltf/cajas.gltf', {
-            scale: 40, // Aumentado de 0.4 a 4.0
-            position: { x: -5, y: -4.5, z: 0 },
+            scale: 10.0,
+            position: { x: -0.08, y: -0.13, z: 0 },
             animate: true
           });
           break;
         case 20:
           setupModel('model-cajas2', './src/assets/3d/gltf/cajas.gltf', {
-            scale: 40, // Aumentado de 0.4 a 4.0
-            position: { x: -5, y: -4.5, z: 0 },
+            scale: 10.0,
+            position: { x: -0.08, y: -0.13, z: 0 },
             animate: true
           });
           break;
@@ -525,7 +526,7 @@
       const nextButton = document.getElementById('next-button');
       
       // Lista de pantallas donde se deben ocultar las flechas
-      const hideNavigationScreens = [2, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15,16];
+      const hideNavigationScreens = [2];
       
       // Ocultar ambas flechas si estamos en una de las pantallas especificadas
       if (hideNavigationScreens.includes(currentScreen)) {
@@ -545,16 +546,7 @@
       } else {
         prevButton.style.opacity = '1';
         prevButton.style.pointerEvents = 'auto';
-        // Navegación especial para las pantallas 17, 20 y 11
-        if (currentScreen === 20) {
-          prevButton.onclick = () => showScreen(18);
-        } else if (currentScreen === 17) {
-          prevButton.onclick = () => showScreen(11);
-        } else if (currentScreen === 11) {
-          prevButton.onclick = () => showScreen(4);
-        } else {
-          prevButton.onclick = previousScreen;
-        }
+        prevButton.onclick = previousScreen;
       }
 
       if (currentScreen >= totalScreens) {
@@ -564,16 +556,7 @@
       } else {
         nextButton.style.opacity = '1';
         nextButton.style.pointerEvents = 'auto';
-        // Navegación especial para las pantallas 4, 11 y 19
-        if (currentScreen === 19) {
-          nextButton.onclick = () => showScreen(21);
-        } else if (currentScreen === 4) {
-          nextButton.onclick = () => showScreen(11);
-        } else if (currentScreen === 11) {
-          nextButton.onclick = () => showScreen(17);
-        } else {
-          nextButton.onclick = nextScreen;
-        }
+        nextButton.onclick = nextScreen;
       }
     };
 
@@ -683,15 +666,15 @@
             // Luego cargar el modelo con un pequeño retraso para asegurar que el contenedor esté listo
             setTimeout(() => {
               setupModel('model-boton-comenzar', './src/assets/3d/gltf/esfera-inicio.gltf', {
-                scale: 270.0,
-                position: { x: -30, y: -30, z: 0.5 },
+                scale: 100.0,
+                position: { x: -1.3, y: -1.1, z: 0.5 },
                 rotation: { x: 0, y: 0, z: 0 },
                 clickable: true,
                 cameraZ: 12,
                 onClick: () => showScreen(3)
               });
-            }, 500); // Aumentado el tiempo de espera para asegurar que el contenedor esté listo
-          }, 1000);
+            }, 100); // Aumentado el tiempo de espera para asegurar que el contenedor esté listo
+          }, 500);
         }
       });
     }
@@ -808,18 +791,18 @@
         z-index: -2;
     }
 
-    /* Contenedor principal */
+    /* Contenedor principal base */
     .contenedor {
-        width: 100%;
-        max-width: 90vw;
-        height: 90vh;
         position: relative;
         margin: 0 auto;
-        overflow: hidden;
+        overflow: visible;
         background: rgba(255, 255, 255, 0.85);
         box-shadow: none;
         transition: all 0.3s ease;
         z-index: 1;
+        /* Dimensiones base del contenedor */
+        width: 1024px;
+        height: 768px;
     }
 
     /* Solo hacer el contenedor transparente cuando el scanner está activo */
@@ -903,10 +886,9 @@
 
     .model-wrapper {
         position: absolute;
-        width: 100%;
-        height: 100%;
+        width: 1024px;
+        height: 768px;
         pointer-events: none;
-        cursor: default;
     }
 
     .model-3d {
@@ -920,16 +902,18 @@
     }
 
     .nav-buttons {
-        position: absolute;
-        bottom: 3vh;
-        right: 4%;
+        position: fixed;
+        bottom: 4vh;
+        right: 4vw;
         display: flex;
-        gap: 2vw;
+        gap: 1vw;
         z-index: 1000;
+        transform-origin: bottom right;
     }
 
     .nav-button {
-        width: 2vw;
+        width: 4vw;
+        min-width: 30px;
         height: auto;
         cursor: pointer;
         transition: transform 0.2s;
@@ -1019,10 +1003,10 @@
     /* Posiciones para los modelos del menú principal */
     #model-menu-inicial-wrapper {
         position: absolute;
-        width: 80vw;
-        height: 80vw;
-        top: 50%;
-        left: 50%;
+        width: 819px;
+        height: 819px;
+        top: 384px;
+        left: 512px;
         transform: translate(-50%, -50%);
         z-index: 1;
     }
@@ -1145,11 +1129,12 @@
 
     /* Posiciones para los botones del menú secundario */
     #model-menu2-wrapper {
-        top: 50%;
-        left: 50%;
+        position: absolute;
+        width: 921px;
+        height: 921px;
+        top: 384px;
+        left: 512px;
         transform: translate(-50%, -50%);
-        width: 90vw;
-        height: 90vw;
     }
 
     #model-plantas-btn-wrapper {
@@ -1205,10 +1190,10 @@
     /* Ajustar el wrapper del modelo de inicio */
     #model-boton-comenzar-wrapper {
         position: absolute;
-        width: 50vw;
-        height: 40vw;
-        top: 50%;
-        left: 50%;
+        width: 512px;
+        height: 384px;
+        top: 384px;
+        left: 512px;
         transform: translate(-50%, -50%);
         z-index: 10;
         pointer-events: auto;
@@ -1266,33 +1251,39 @@
 
     /* Estilos para el botón de ayuda */
     .help-button {
-        position: absolute;
-        bottom: 2vh;
-        left: 2vw;
-        width: 2vw;
-        min-width: 5%;
-        height: auto;
+        position: fixed;
+        bottom: 4vh;
+        left: 4vw;
+        width: 4vw;
+        min-width: 30px;
+        z-index: 1000;
         cursor: pointer;
-        z-index: 100;
     }
 
     .help-info {
-        position: absolute;
-        bottom: 2vh;
-        left: 2vw;
+        position: fixed;
+        bottom: 4vh;
+        left: 4.5vw;
         width: 27vw;
-        height: auto;
+        min-width: 200px;
+        z-index: 999;
         opacity: 0;
-        transform-origin: left;
-        transform: scaleX(0);
-        transition: all 0.3s ease-in-out;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
         pointer-events: none;
     }
 
     .help-info.active {
         opacity: 1;
+        visibility: visible;
         pointer-events: auto;
-        transform: scaleX(1);
+    }
+
+    /* Ajustes específicos para tablets */
+    @media (max-width: 1024px) {
+        .help-info {
+            width: 40vw;
+        }
     }
     #help-info-19 , #help-info-20 {
     }
@@ -1546,6 +1537,58 @@
         cursor: pointer !important;
         pointer-events: auto !important;
     }
+
+    /* Media queries para ajustar el escalado en diferentes dispositivos */
+    @media (max-width: 768px) {
+        .contenedor {
+            max-width: 100vw;
+            height: 85vh;
+            transform: scale(calc(min(100vw/1024, 85vh/768)));
+        }
+    }
+
+    @media (orientation: portrait) {
+        .contenedor {
+            width: calc(133.33vh * 0.9); /* Mismo ancho que en landscape pero ajustado */
+            height: calc(100vh * 0.9); /* Alto ajustado proporcionalmente */
+            transform: scale(0.85);
+            transform-origin: center center;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            overflow: hidden;
+            height: 100vh;
+        }
+    }
+
+    @media (orientation: landscape) {
+        .contenedor {
+            height: calc(100vh * 0.9); /* 90% del alto de la ventana */
+            width: calc(133.33vh * 0.9); /* Mantener proporción 4:3 */
+            transform: scale(0.85);
+            transform-origin: center center;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            overflow: hidden;
+            height: 100vh;
+        }
+    }
+
+    /* Ajustes específicos para los botones con problemas de color */
+    #cadena-btn,
+    #biotecnologia-btn,
+    #operaciones-btn {
+        filter: hue-rotate(45deg) saturate(1.2);
+    }
   </style>
 </head>
 
@@ -1592,12 +1635,6 @@
     <div id="model-menu-inicial-wrapper" class="model-wrapper">
         <div id="model-menu-inicial" class="model-3d"></div>
     </div>
-    <img src="./src/img/Buttons/Recurso 2 (1).png" id="operaciones-btn" class="menu-button" alt="" onclick="goToOperaciones()" style="position: absolute; top: 82%; left: 56.5%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
-    <img src="./src/img/Buttons/Recurso 3.png" id="investigacion-btn" class="menu-button" alt="" onclick="goToInvestigacion()" style="position: absolute; top: 76%; left: 30%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
-    <img src="./src/img/Buttons/Recurso 4.png" id="cadena-btn" class="menu-button" alt="" onclick="goToCadena()" style="position: absolute; top: 41.5%; left: 20%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
-    <img src="./src/img/Buttons/Recurso 5.png" id="biotecnologia-btn" class="menu-button" alt="" onclick="goToBiotecnologia()" style="position: absolute; top: 12.5%; left: 37.5%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
-    <img src="./src/img/Buttons/Recurso 6.png" id="vision-btn" class="menu-button" alt="" onclick="goToVision()" style="position: absolute; top: 52%; left: 75.5%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
-    <img src="./src/img/Buttons/Recurso 7.png" id="glenmark-btn" class="menu-button" alt="" onclick="goToGlenmark()" style="position: absolute; top: 20%; left: 65%; transform: translate(-50%, -50%); z-index: 5; visibility: hidden; opacity: 0; width: 9%; cursor: pointer !important; pointer-events: auto !important; clip-path: circle(50% at center);">
     <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(4)">
     <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-4" onclick="toggleHelp(4)">
   </div>
@@ -1818,7 +1855,7 @@
         <div id="model-cajas" class="model-3d"></div>
     </div>
     <img src="./src/img/Recurso (14).png" alt="Ayuda" class="help-button" onclick="toggleHelp(19)">
-    <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-20" onclick="toggleHelp(20)" style="top:92%; left:5.3%; width: 65%; height: 6%;">
+    <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-19" onclick="toggleHelp(19)">
   </div>
 
   <div id="screen20" class="screen">
@@ -1829,8 +1866,8 @@
     <div id="model-cajas2-wrapper" class="model-wrapper">
         <div id="model-cajas2" class="model-3d"></div>
     </div>
-    <img src="./src/img/Recurso (14).png" alt="Ayuda" class="help-button" onclick="toggleHelp(20)" >
-    <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-20" onclick="toggleHelp(20)" style="top:92%; left:5.3%; width: 13%; height: 5%;">
+    <img src="./src/img/Recurso (14).png" alt="Ayuda" class="help-button" onclick="toggleHelp(20)">
+    <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-20" onclick="toggleHelp(20)">
   </div>
 
   <div id="screen21" class="screen">
