@@ -145,6 +145,17 @@
       directionalLight.position.set(5, 5, 5);
       scene.add(directionalLight);
 
+      // Solo crear controles si no están explícitamente desactivados
+      if (options.controls !== false) {
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.screenSpacePanning = false;
+        controls.minDistance = 1;
+        controls.maxDistance = 50;
+        controls.maxPolarAngle = Math.PI / 2;
+      }
+
       let mixer;
       let animationFrameId;
       const clock = new THREE.Clock();
@@ -364,75 +375,85 @@
       switch(screenNumber) {
         case 2:
           setupModel('model-boton-comenzar', './src/assets/3d/gltf/esfera-inicio.gltf', {
-            scale: 100.0,
-            position: { x: -1.3, y: -1.1, z: 0.5 },
-            rotation: { x: 0, y: 0, z: 0 },
+            scale: 30.0,
+            position: { x: -0.4, y: -0.17, z: 0 },
+            rotation: { x: 0, y: 0.1, z: 0 },
             clickable: true,
             cameraZ: 12,
-            onClick: () => showScreen(3)
+            onClick: () => showScreen(3),
+            controls: false
           });
           break;
         case 3:
           setupModel('model-esfera-inicial', './src/assets/3d/gltf/esfera-inicial-estatica.gltf', {
-            scale: 80.0,
-            position: { x: -1, y: -0.4, z: 0 },
+            scale: 50.0,
+            position: { x: -0.65, y: -0.35, z: 0 },
             rotation: { x: 0, y: 0, z: 0 },
             cameraZ: 20
           });
           break;
         case 4:
           setupModel('model-menu-inicial', './src/assets/3d/gltf/menu-inicial-animacion.gltf', {
-            scale: 58.0,
-            position: { x: -1, y: -0.3, z: 0 },
+            scale: 50.0,
+            position: { x: -0.5, y: -0.5, z: 0 },
             rotation: { x: 0, y: 0, z: 0 },
             cameraZ: 20,
-            animate: true
+            animate: true,
+            onLoad: () => {
+              // Mostrar los círculos después de un pequeño retraso
+              setTimeout(() => {
+                const circles = document.querySelectorAll('.solid-circle');
+                circles.forEach(circle => {
+                  circle.classList.add('show-circles');
+                });
+              }, 1000);
+            }
           });
           break;
         case 5:
           setupModel('model-glenmark', './src/assets/3d/gltf/boton-glenmark-animacion.gltf', {
-            scale: 20.0,
-            position: { x: -0.1, y: -0.25, z: 0 },
+            scale: 50.0,
+            position: { x: -0.5, y: -0.9, z: 0 },
             animate: true
           });
           break;
         case 6:
           setupModel('model-vision', './src/assets/3d/gltf/boton-vision-animacion.gltf', {
-            scale: 20.0,
-            position: { x: -0.23, y: -0.23, z: 0 },
+            scale: 50.0,
+            position: { x: -0.312, y: -0.5, z: 0},
             animate: true
           });
           break;
         case 7:
           setupModel('model-biotecnologia', './src/assets/3d/gltf/boton-biotecnologia-animacion.gltf', {
-            scale: 20.0,
-            position: { x: -0.21, y: -0.23, z: 0 },
+            scale: 50.0,
+            position: { x: -0.7, y: -0.75, z: 0 },
             animate: true
           });
           break;
         case 8:
           setupModel('model-cadena', './src/assets/3d/gltf/boton-cadena-animacion.gltf', {
-            scale: 20.0,
-            position: { x: -0.1, y: -0.23, z: 0 },
+            scale: 50.0,
+            position: { x: -0.4, y: -0.25, z: 0 },
             animate: true
           });
           break;
         case 9:
           setupModel('model-investigacion', './src/assets/3d/gltf/boton-investigacion-animacion.gltf', {
-            scale: 20.0,
-            position: { x: -0.2, y: -0.25, z: 0 },
+            scale: 50.0,
+            position: { x: -0.75, y: -0.5, z: 0 },
             animate: true
           });
           break;
         case 10:
           setupModel('model-operaciones', './src/assets/3d/gltf/boton-operaciones-animacion.gltf', {
-            scale: 20.0,
-            position: { x: -0.2, y: -0.21, z: 0 },
+            scale: 50.0,
+            position: { x: -0.55, y: -0.27, z: 0 },
             animate: true
           });
           setupModel('model-mapa', './src/assets/3d/gltf/mapa-animado.gltf', {
-            scale: 13.0,
-            position: { x: -0.15, y: 0.3, z: 0 },
+            scale: 10.0,
+            position: { x: -0.1, y: 0.2, z: 0 },
             rotation: { x: 0.9, y: 0, z: 0 },
             animate: true,
             cameraZ: 10
@@ -440,65 +461,65 @@
           break;
         case 11:
           setupModel('model-menu2', './src/assets/3d/gltf/menu2-animacion.gltf', {
-            scale: 14.0,
-            position: { x: -0.205, y: -0.08, z: 0 },
+            scale: 12.0,
+            position: { x: -0.12, y: -0.12, z: 0.1 },
             animate: true
           });
           break;
         case 12:
           setupModel('model-plantas', './src/assets/3d/gltf/boton-esfera-plantas-animacion.gltf', {
-            scale: 20.0,
-            position: { x: -0.29, y: -0.27, z: 0 },
+            scale: 15.0,
+            position: { x: -0.19, y: -0.15, z: 0 },
             animate: true
           });
           break;
         case 13:
           setupModel('model-pharma', './src/assets/3d/gltf/boton-esfera-investigacion-animacion.gltf', {
-            scale: 20.0,
-            position: { x: -0.2, y: -0.15, z: 0 },
+            scale: 12.0,
+            position: { x: -0.135, y: -0.12, z: 0 },
             animate: true
           });
           break;
         case 14:
           setupModel('model-investigacion2', './src/assets/3d/gltf/boton-engranaje-investigacion-animacion.gltf', {
-            scale: 20.0,
-            position: { x: -0.3, y: -0.18, z: 0 },
+            scale: 15.0,
+            position: { x: -0.18, y: -0.15, z: 0 },
             animate: true
           });
           break;
         case 15:
           setupModel('model-engranaje', './src/assets/3d/gltf/boton-engranaje-pharma-animacion.gltf', {
-            scale: 20.0,
-            position: { x: -0.25, y: -0.23, z: 0 },
+            scale: 15.0,
+            position: { x: -0.2, y: -0.17, z: 0 },
             animate: true
           });
           break;
         case 16:
           setupModel('model-microscopio', './src/assets/3d/gltf/boton-engranaje-microscopio-animacion.gltf', {
-            scale: 20.0,
-            position: { x: -0.16, y: -0.18, z: 0 },
+            scale: 15.0,
+            position: { x: -0.18, y: -0.14, z: 0 },
             animate: true
           });
           break;
         case 17:
           setupModel('model-grafico', './src/assets/3d/gltf/grafico-barras-animado.gltf', {
-            scale: 25.0,
-            position: { x: -0.35, y: -0.23, z: 0 },
+            scale: 16.0,
+            position: { x: -0.15, y: -0.15, z: 0 },
             rotation: { x: 0, y: -(Math.PI * -30) / 180, z: 0 },
             animate: true
           });
           break;
         case 19:
           setupModel('model-cajas', './src/assets/3d/gltf/cajas.gltf', {
-            scale: 10.0,
-            position: { x: -0.08, y: -0.13, z: 0 },
+            scale: 7.0,
+            position: { x: -0.06, y: -0.08, z: 0 },
             animate: true
           });
           break;
         case 20:
           setupModel('model-cajas2', './src/assets/3d/gltf/cajas.gltf', {
-            scale: 10.0,
-            position: { x: -0.08, y: -0.13, z: 0 },
+            scale: 7.0,
+            position: { x: -0.06, y: -0.08, z: 0 },
             animate: true
           });
           break;
@@ -526,19 +547,82 @@
       const nextButton = document.getElementById('next-button');
       
       // Lista de pantallas donde se deben ocultar las flechas
-      const hideNavigationScreens = [2];
+      const hideNavigationScreens = [2,5,6,7,8,9,10,12,13,14,15,16,1];
       
-      // Ocultar ambas flechas si estamos en una de las pantallas especificadas
+      // Primero, mostrar ambos botones por defecto
+      prevButton.style.display = 'block';
+      nextButton.style.display = 'block';
+      
+      // Si estamos en una pantalla donde se deben ocultar las flechas
       if (hideNavigationScreens.includes(currentScreen)) {
         prevButton.style.display = 'none';
         nextButton.style.display = 'none';
         return;
-      } else {
-        prevButton.style.display = 'block';
-        nextButton.style.display = 'block';
       }
       
-      // Configurar estados de deshabilitado para las demás pantallas
+      // Configuración especial para la pantalla 4
+      if (currentScreen === 4) {
+        prevButton.onclick = () => showScreen(3);
+        prevButton.style.opacity = '1';
+        prevButton.style.pointerEvents = 'auto';
+        nextButton.onclick = () => showScreen(11);
+        nextButton.style.opacity = '1';
+        nextButton.style.pointerEvents = 'auto';
+        return;
+      }
+      
+      // Configuración especial para la pantalla 11
+      if (currentScreen === 11) {
+        prevButton.onclick = () => showScreen(4);
+        prevButton.style.opacity = '1';
+        prevButton.style.pointerEvents = 'auto';
+        nextButton.onclick = () => showScreen(17);
+        nextButton.style.opacity = '1';
+        nextButton.style.pointerEvents = 'auto';
+        return;
+      }
+
+      // Configuración especial para la pantalla 17
+      if (currentScreen === 17) {
+        prevButton.onclick = () => showScreen(11);
+        prevButton.style.opacity = '1';
+        prevButton.style.pointerEvents = 'auto';
+        nextButton.onclick = () => showScreen(18);
+        nextButton.style.opacity = '1';
+        nextButton.style.pointerEvents = 'auto';
+        return;
+      }
+
+      // Configuración especial para la pantalla 18
+      if (currentScreen === 18) {
+        prevButton.onclick = () => showScreen(17);
+        prevButton.style.opacity = '1';
+        prevButton.style.pointerEvents = 'auto';
+        nextButton.onclick = () => showScreen(21);
+        nextButton.style.opacity = '1';
+        nextButton.style.pointerEvents = 'auto';
+        return;
+      }
+
+      // Configuración especial para las pantallas 19 y 20
+      if (currentScreen === 19 || currentScreen === 20) {
+        prevButton.onclick = () => showScreen(18);
+        prevButton.style.opacity = '1';
+        prevButton.style.pointerEvents = 'auto';
+        nextButton.style.display = 'none';
+        return;
+      }
+      
+      // Configuración especial para la pantalla final
+      if (currentScreen === 21) {
+        prevButton.onclick = () => showScreen(18);
+        prevButton.style.opacity = '1';
+        prevButton.style.pointerEvents = 'auto';
+        nextButton.style.display = 'none';
+        return;
+      }
+      
+      // Configuración por defecto para otras pantallas
       if (currentScreen <= 2) {
         prevButton.style.opacity = '0.5';
         prevButton.style.pointerEvents = 'none';
@@ -666,12 +750,13 @@
             // Luego cargar el modelo con un pequeño retraso para asegurar que el contenedor esté listo
             setTimeout(() => {
               setupModel('model-boton-comenzar', './src/assets/3d/gltf/esfera-inicio.gltf', {
-                scale: 100.0,
-                position: { x: -1.3, y: -1.1, z: 0.5 },
-                rotation: { x: 0, y: 0, z: 0 },
-                clickable: true,
-                cameraZ: 12,
-                onClick: () => showScreen(3)
+                scale: 30.0,
+            position: { x: -0.4, y: -0.17, z: 0 },
+            rotation: { x: 0, y: 0.1, z: 0 },
+            clickable: true,
+            cameraZ: 12,
+            onClick: () => showScreen(3),
+            controls: false
               });
             }, 100); // Aumentado el tiempo de espera para asegurar que el contenedor esté listo
           }, 500);
@@ -805,6 +890,97 @@
         height: 768px;
     }
 
+    /* Estilos para el scanner */
+    .scanner-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80vw;
+        max-width: 500px;
+        height: 80vw;
+        max-height: 500px;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        border-radius: 20px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        z-index: 100;
+    }
+
+    .scanner-text {
+        position: fixed;
+        top: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.5);
+        padding: 15px 30px;
+        border-radius: 30px;
+        z-index: 101;
+        white-space: nowrap;
+    }
+
+    .scanner-corners {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        border: 4px solid #fff;
+    }
+
+    .corner-top-left {
+        top: -2px;
+        left: -2px;
+        border-right: none;
+        border-bottom: none;
+    }
+
+    .corner-top-right {
+        top: -2px;
+        right: -2px;
+        border-left: none;
+        border-bottom: none;
+    }
+
+    .corner-bottom-left {
+        bottom: -2px;
+        left: -2px;
+        border-right: none;
+        border-top: none;
+    }
+
+    .corner-bottom-right {
+        bottom: -2px;
+        right: -2px;
+        border-left: none;
+        border-top: none;
+    }
+
+    .scanner-line {
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background: #fff;
+        top: 50%;
+        animation: scan 2s linear infinite;
+    }
+
+    @keyframes scan {
+        0% {
+            transform: translateY(-100px);
+            opacity: 0;
+        }
+        50% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(100px);
+            opacity: 0;
+        }
+    }
+
     /* Solo hacer el contenedor transparente cuando el scanner está activo */
     #scanner-screen.active ~ .contenedor {
         background: transparent !important;
@@ -816,68 +992,69 @@
     }
 
     body {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        font-family: Arial, sans-serif;
-        background: transparent;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: #000;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
 
-    .screen {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: none;
-        padding: 10px 20px;
-        box-sizing: border-box;
-    }
+  .screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    padding: 10px 20px;
+    box-sizing: border-box;
+}
 
-    .screen.active {
-        display: block;
-    }
+.screen.active {
+    display: block;
+}
 
-    .content-wrapper {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-        box-sizing: border-box;
-    }
+.content-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
 
-    .model-container {
-        width: 300px;
-        height: 300px;
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: auto;
-        transform: translateZ(0); /* Activar aceleración por hardware */
-        backface-visibility: hidden; /* Mejorar rendimiento */
-        perspective: 1000px; /* Mejorar calidad en transformaciones 3D */
-    }
+.model-container {
+  width: 300px;
+  height: 300px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  transform: translateZ(0); /* Activar aceleración por hardware */
+  backface-visibility: hidden; /* Mejorar rendimiento */
+  perspective: 1000px; /* Mejorar calidad en transformaciones 3D */
+}
 
-    .model-container img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-        position: absolute;
-        top: 20%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1;
-        image-rendering: -webkit-optimize-contrast; /* Mejorar nitidez en webkit */
-        image-rendering: crisp-edges; /* Mejorar nitidez en general */
-        -ms-interpolation-mode: nearest-neighbor; /* Mejorar nitidez en IE */
-    }
+    
+.model-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  image-rendering: -webkit-optimize-contrast; /* Mejorar nitidez en webkit */
+  image-rendering: crisp-edges; /* Mejorar nitidez en general */
+  -ms-interpolation-mode: nearest-neighbor; /* Mejorar nitidez en IE */
+}
 
     .model-container canvas {
         width: 100% !important;
@@ -906,7 +1083,7 @@
         bottom: 4vh;
         right: 4vw;
         display: flex;
-        gap: 1vw;
+        gap: 2vw;
         z-index: 1000;
         transform-origin: bottom right;
     }
@@ -963,53 +1140,155 @@
 
     /* Estilos base para los contenedores de imágenes */
     .screen-image {
-        
+        position: absolute;
         width: 100%;
         height: 100%;
         z-index: 1;
     }
+
+    /* Estilos específicos para las imágenes de las pantallas 5-10 */
+    #screen5-image {
+        top: 10%;
+        left: 15%;
+        width: 80%;
+        height: 80%;
+    }
+
     #screen6-image {
-    padding-left: 5%;}
-    #screen11-image {
-      width: 100%;
-      height: auto;
+        top: 10%;
+        left: 14%;
+        width: 80%;
+        height: 80%;
+        z-index: 0;
     }
-    #screen13-image {      
-      padding-top: 14vh;
+
+    #screen7-image {
+        top: 10%;
+        left: 15%;
+        width: 80%;
+        height: 80%;
+        z-index: 0;
     }
-    
+
+    #screen8-image {
+        top: 10%;
+        left: 14%;
+        width: 80%;
+        height: 80%;
+        z-index: 0;
+    }
+
+    #screen9-image {
+        top: 10%;
+        left: 15%;
+        width: 80%;
+        height: 80%;
+        z-index: 0;
+    }
+
+    #screen10-image {
+        top: 10%;
+        left: 10.5%;
+        width: 80%;
+        height: 80%;
+        z-index: 0;
+    }
 
     /* Estilos para las imágenes dentro de los contenedores */
     .screen-image img {
-        
-        width: 100%;
-        height: 100%;
+        width: 95%;
+        height: 95%;
         object-fit: contain;
+    }
+
+    #screen11-image {
+      z-index: 0;
+    }
+
+    #screen11-image img {
+      width: 111%;
+      height: 129%;
+      z-index: 0;
+    }
+
+    #screen12-image {
+      width: 85%;
+      height: 85%;
+      left: 10%;
+      z-index: 0;
+    }
+
+    #screen13-image {
+      width: 85%;
+      height: 85%;
+      top: 30%;
+      left: 10%;
+      z-index: 0;
+    }
+
+    #screen14-image {
+      width: 85%;
+      height: 85%;
+      top: 18%;
+      left: 20%;
+      z-index: 0;
+    }
+
+    #screen15-image {
+      width: 85%;
+      height: 85%;
+      top: 9%;
+      left: 10%;
+      z-index: 0;
+    }
+
+    #screen16-image {
+      width: 85%;
+      height: 85%;
+      top: 22%;
+      left: 4%;
+      z-index: 0;
+    }
+
+    #screen17-image {
+      width: 104%;
+      height: 87%;
+      top: 7%;
+      left: 6%;
+      z-index: 0;
+    }
+
+    #screen19-image {
+      z-index: 0;
+    }
+
+    #screen20-image {
+      z-index: 0;
     }
 
     /* Ajustes específicos para cada imagen */
     #screen2-image img {
-        transform: translate(0, 0); /* Ajustar posición según necesites */
+        transform: translate(0, 0);
     }
 
     #screen3-image img {
-        transform: translate(0, 30px); /* Ejemplo de ajuste */
+        transform: translate(0, 11%);
     }
 
     #screen4-image img {
-        transform: translate(15px, -5px); /* Ejemplo de ajuste */
+        transform: translate(15px, -5px);
     }
 
     /* Posiciones para los modelos del menú principal */
     #model-menu-inicial-wrapper {
         position: absolute;
-        width: 819px;
-        height: 819px;
-        top: 384px;
-        left: 512px;
-        transform: translate(-50%, -50%);
-        z-index: 1;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 0;
     }
+
     .menu-button {
       width: 8vw;
       min-width: 27px;
@@ -1037,8 +1316,6 @@
     #model-biotecnologia-btn-wrapper {
         top: 50%;
         left: 10%;
-        
-
     }
 
     #model-investigacion-btn-wrapper {
@@ -1073,48 +1350,39 @@
 
     /* Posiciones para los modelos animados */
     #model-glenmark-anim-wrapper {
-        top: 40%;
-        left: 22%;
+        top: 32%;
+        left: 32%;
         transform: translate(-50%, -50%);
         cursor: default;
     }
 
     #model-vision-anim-wrapper {
-        top: 40%;
-        left: 50%;
+        top: 47%;
+        left: 33%;
         transform: translate(-50%, -50%);
-    }
-
-    /* Ajustar el botón de retorno */
-    .return-button {
-        position: absolute;
-        top: 5%;
-        right: 5%;
-        width: 10px;
-        cursor: pointer;
     }
 
     /* Posiciones para los modelos animados adicionales */
     #model-biotecnologia-anim-wrapper {
-        top: 40%;
-        left: 50%;
+        top: 28%;
+        left: 65%;
         transform: translate(-50%, -50%);
     }
 
     #model-cadena-anim-wrapper {
-        top: 40%;
-        left: 50%;
+        top: 72%;
+        left: 39%;
         transform: translate(-50%, -50%);
     }
 
     #model-investigacion-anim-wrapper {
-        top: 40%;
-        left: 50%;
+        top: 44%;
+        left: 72%;
         transform: translate(-50%, -50%);
     }
 
     #model-operaciones-anim-wrapper {
-        top: 40%;
+        top: 70%;
         left: 50%;
         transform: translate(-50%, -50%);
     }
@@ -1130,11 +1398,10 @@
     /* Posiciones para los botones del menú secundario */
     #model-menu2-wrapper {
         position: absolute;
-        width: 921px;
-        height: 921px;
-        top: 384px;
-        left: 512px;
-        transform: translate(-50%, -50%);
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
     }
 
     #model-plantas-btn-wrapper {
@@ -1190,10 +1457,10 @@
     /* Ajustar el wrapper del modelo de inicio */
     #model-boton-comenzar-wrapper {
         position: absolute;
-        width: 512px;
-        height: 384px;
-        top: 384px;
-        left: 512px;
+        width: 100%;
+        height: 100%;
+        top: 75%;
+        left: 75%;
         transform: translate(-50%, -50%);
         z-index: 10;
         pointer-events: auto;
@@ -1219,6 +1486,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
     }
+
     #btn1, #btn2 {
       cursor: pointer;
       transition: transform 0.2s;
@@ -1285,8 +1553,12 @@
             width: 40vw;
         }
     }
-    #help-info-19 , #help-info-20 {
+
+    #help-info-19, #help-info-20 {
+      left: 7%;
+      width: 70%;
     }
+
     /* Mantener cursor pointer solo en elementos interactivos */
     .nav-button:not([disabled]),
     .return-button,
@@ -1358,7 +1630,7 @@
     #model-cajas-wrapper,
     #model-cajas2-wrapper {
         position: absolute;
-        width: 60vw;
+        width: 100%;
         height: 60vw;
         top: 50%;
         left: 50%;
@@ -1410,132 +1682,12 @@
     #screen18 #btn1:hover, #screen18 #btn2:hover {
       transform: scale(1.05);
     }
+
     #fda {
       position: absolute;
       top: 1vh;
       left: 77%;
       width: 15%;
-    }
-
-    /* Estilos para el scanner mejorado */
-    .scanner-container {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 30vw;
-      height: 30vw;
-      min-width: 250px;
-      min-height: 250px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      background: rgba(255, 255, 255, 0.1);
-      border: 0.2vw solid rgba(255, 255, 255, 0.5);
-      border-radius: 2vw;
-    }
-
-    .scanner-line {
-      position: absolute;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(90deg, rgba(0,255,255,0) 0%, rgba(0,255,255,1) 50%, rgba(0,255,255,0) 100%);
-      animation: scanLine 2s ease-in-out infinite;
-      box-shadow: 0 0 8px rgba(0,255,255,0.8);
-    }
-
-    @keyframes scanLine {
-      0% {
-        top: 0;
-      }
-      50% {
-        top: calc(100% - 2px);
-      }
-      100% {
-        top: 0;
-      }
-    }
-
-    .scanner-text {
-      color: #fff;
-      margin-top: 2vh;
-      font-size: 1.2rem;
-      text-align: center;
-      text-shadow: 0.2vw 0.2vw 0.4vw rgba(0,0,0,0.5);
-      width: 100%;
-      position: absolute;
-      bottom: -4vh;
-      font-weight: bold;
-    }
-
-    .scanner-corners {
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      border: 2px solid #0ff;
-      opacity: 0.8;
-    }
-
-    .corner-top-left {
-      top: -2px;
-      left: -2px;
-      border-right: none;
-      border-bottom: none;
-    }
-
-    .corner-top-right {
-      top: -2px;
-      right: -2px;
-      border-left: none;
-      border-bottom: none;
-    }
-
-    .corner-bottom-left {
-      bottom: -2px;
-      left: -2px;
-      border-right: none;
-      border-top: none;
-    }
-
-    .corner-bottom-right {
-      bottom: -2px;
-      right: -2px;
-      border-left: none;
-      border-top: none;
-    }
-    .menu-2-button{
-      width: 5vw;
-      min-width: 13%;
-      position: absolute;
-      visibility: hidden;
-      opacity: 0;
-      transition: visibility 0.3s, opacity 0.3s;
-      cursor: pointer !important;
-      pointer-events: auto !important;
-    }
-
-    .menu-2-button.show-buttons {
-      visibility: visible !important;
-      opacity: 1 !important;
-    }
-
-    /* Estilos para los nuevos botones */
-    #operaciones-btn.show-buttons,
-    #investigacion-btn.show-buttons,
-    #cadena-btn.show-buttons,
-    #biotecnologia-btn.show-buttons,
-    #vision-btn.show-buttons,
-    #glenmark-btn.show-buttons {
-        visibility: visible !important;
-        opacity: 1 !important;
-    }
-  
-
-    .menu-button {
-        cursor: pointer !important;
-        pointer-events: auto !important;
     }
 
     /* Media queries para ajustar el escalado en diferentes dispositivos */
@@ -1549,8 +1701,8 @@
 
     @media (orientation: portrait) {
         .contenedor {
-            width: calc(133.33vh * 0.9); /* Mismo ancho que en landscape pero ajustado */
-            height: calc(100vh * 0.9); /* Alto ajustado proporcionalmente */
+            width: calc(133.33vh * 0.9);
+            height: calc(100vh * 0.9);
             transform: scale(0.85);
             transform-origin: center center;
         }
@@ -1567,8 +1719,8 @@
 
     @media (orientation: landscape) {
         .contenedor {
-            height: calc(100vh * 0.9); /* 90% del alto de la ventana */
-            width: calc(133.33vh * 0.9); /* Mantener proporción 4:3 */
+            height: calc(100vh * 0.9);
+            width: calc(133.33vh * 0.9);
             transform: scale(0.85);
             transform-origin: center center;
         }
@@ -1589,6 +1741,133 @@
     #operaciones-btn {
         filter: hue-rotate(45deg) saturate(1.2);
     }
+
+    .menu-circles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .solid-circle {
+      position: absolute;
+      width: 10.5%;
+      height: 0;
+      padding-bottom: 10.5%;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      opacity: 0 !important;
+    }
+
+    .solid-circle:hover {
+      transform: scale(1.1);
+    }
+
+    /* Posiciones específicas para cada círculo */
+    #circle-operaciones {
+      top: 76%;
+      left: 52%;
+      transition-delay: 0s;
+    }
+
+    #circle-investigacion {
+      top: 46.7%;
+      left: 70.5%;
+      transition-delay: 0.1s;
+    }
+
+    #circle-cadena {
+      top: 70%;
+      left: 25.5%;
+      transition-delay: 0.2s;
+    }
+
+    #circle-biotecnologia {
+      top: 15.3%;
+      left: 60%;
+      transition-delay: 0.3s;
+    }
+
+    #circle-vision {
+      top: 37%;
+      left: 16.5%;
+      transition-delay: 0.4s;
+    }
+
+    #circle-glenmark {
+      top: 8.5%;
+      left: 33.3%;
+      transition-delay: 0.5s;
+    }
+
+    /* Pantalla 11: Menú Secundario */
+    .menu-circles-2 {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+    }
+
+    .solid-circle-2 {
+      position: absolute;
+      width: 14%;
+      height: 18%;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      opacity: 0 !important;
+    }
+
+    .solid-circle-2:hover {
+      transform: scale(1.1);
+    }
+
+    /* Posiciones específicas para cada círculo del menú secundario */
+    #circle-pharma {
+      top: 19%;
+      left: 61%;
+    }
+
+    #circle-plantas {
+      top: 28.5%;
+      left: 21.5%;
+    }
+
+    #circle-investigacion2 {
+      top: 62%;
+      left: 23%;
+      width: 18%;
+    }
+
+    #circle-microscopio {
+      top: 60.5%;
+      left: 57.7%;
+      width: 18%;
+      height: 21%;
+    }
+
+    #circle-engranaje {
+      top: 48%;
+      left: 40.3%;
+      width: 18%;
+      height: 23%;
+    }
+
+    /* Estilos para la imagen final */
+    #screen21-image {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    #screen21-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   </style>
 </head>
 
@@ -1607,291 +1886,301 @@
   </div>
 </div>
 
-<div class="contenedor">
-  <!-- Pantalla 2: Inicio -->
-  <div id="screen2" class="screen">
-    <div id="screen2-image" class="screen-image">
-        <img src="./src/img/Recurso (37).png" alt="Inicio">
-    </div>
-    <div id="model-boton-comenzar-wrapper" class="model-wrapper">
-        <div id="model-boton-comenzar" class="model-3d"></div>
-    </div>
-  </div>
 
-  <!-- Pantalla 3: Introducción -->
-  <div id="screen3" class="screen">
-    <div id="screen3-image" class="screen-image">
-        <img src="./src/img/Recurso (38).png" alt="Introducción">
-    </div>
-    <div id="model-esfera-inicial-wrapper" class="model-wrapper">
-        <div id="model-esfera-inicial" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(3)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-3" onclick="toggleHelp(3)">
-  </div>
 
-  <!-- Pantalla 4: Menú Principal -->
-  <div id="screen4" class="screen">
-    <div id="model-menu-inicial-wrapper" class="model-wrapper">
-        <div id="model-menu-inicial" class="model-3d"></div>
+  <div class="contenedor">
+    <!-- Pantalla 2: Inicio -->
+    <div id="screen2" class="screen active">
+      <div id="screen2-image" class="screen-image">
+          <img src="./src/img/Recurso (37).png" alt="Inicio">
+      </div>
+      <div id="model-boton-comenzar-wrapper" class="model-wrapper">
+          <div id="model-boton-comenzar" class="model-3d"></div>
+      </div>
     </div>
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(4)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-4" onclick="toggleHelp(4)">
-  </div>
-
-  <!-- Pantalla 5: Glenmark -->
-  <div id="screen5" class="screen">
-    <div id="screen5-image" class="screen-image">
-        <img src="./src/img/Recurso (26).png" alt="Glenmark">
+  
+    <!-- Pantalla 3: Introducción -->
+    <div id="screen3" class="screen">
+      <div id="screen3-image" class="screen-image">
+          <img src="./src/img/Recurso (38).png" alt="Introducción">
+      </div>
+      <div id="model-esfera-inicial-wrapper" class="model-wrapper">
+          <div id="model-esfera-inicial" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(3)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-3" onclick="toggleHelp(3)">
     </div>
-    <div id="model-glenmark-anim-wrapper" class="model-wrapper">
-        <div id="model-glenmark" class="model-3d"></div>
+  
+    <!-- Pantalla 4: Menú Principal -->
+    <div id="screen4" class="screen">
+      <div class="menu-circles">
+        <div id="circle-operaciones" class="solid-circle" onclick="goToOperaciones()"></div>
+        <div id="circle-investigacion" class="solid-circle" onclick="goToInvestigacion()"></div>
+        <div id="circle-cadena" class="solid-circle" onclick="goToCadena()"></div>
+        <div id="circle-biotecnologia" class="solid-circle" onclick="goToBiotecnologia()"></div>
+        <div id="circle-vision" class="solid-circle" onclick="goToVision()"></div>
+        <div id="circle-glenmark" class="solid-circle" onclick="goToGlenmark()"></div>
+      </div>
+      <div id="model-menu-inicial-wrapper" class="model-wrapper">
+          <div id="model-menu-inicial" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(4)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-4" onclick="toggleHelp(4)">
     </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(4)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(5)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-5" onclick="toggleHelp(5)">
-  </div>
-
-  <!-- Pantalla 6: Visión -->
-  <div id="screen6" class="screen">
-    <div id="screen6-image" class="screen-image">
-        <img src="./src/img/Recurso (25).png" alt="Visión">
+  
+    <!-- Pantalla 5: Glenmark -->
+    <div id="screen5" class="screen">
+      <div id="screen5-image" class="screen-image">
+          <img src="./src/img/Recurso (26).png" alt="Glenmark">
+      </div>
+      <div id="model-glenmark-anim-wrapper" class="model-wrapper">
+          <div id="model-glenmark" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(4)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(5)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-5" onclick="toggleHelp(5)">
     </div>
-    <div id="model-vision-anim-wrapper" class="model-wrapper">
-        <div id="model-vision" class="model-3d"></div>
+  
+    <!-- Pantalla 6: Visión -->
+    <div id="screen6" class="screen">
+      <div id="screen6-image" class="screen-image">
+          <img src="./src/img/Recurso (25).png" alt="Visión">
+      </div>
+      <div id="model-vision-anim-wrapper" class="model-wrapper">
+          <div id="model-vision" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(4)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(6)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-6" onclick="toggleHelp(6)">
     </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(4)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(6)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-6" onclick="toggleHelp(6)">
-  </div>
-
-  <!-- Pantalla 7: Biotecnología -->
-  <div id="screen7" class="screen">
-    <div id="screen7-image" class="screen-image">
-        <img src="./src/img/Recurso (41).png" alt="Biotecnología">
+  
+    <!-- Pantalla 7: Biotecnología -->
+    <div id="screen7" class="screen">
+      <div id="screen7-image" class="screen-image">
+          <img src="./src/img/Recurso (41).png" alt="Biotecnología">
+      </div>
+      <div id="model-biotecnologia-anim-wrapper" class="model-wrapper">
+          <div id="model-biotecnologia" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(4)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(7)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-7" onclick="toggleHelp(7)">
     </div>
-    <div id="model-biotecnologia-anim-wrapper" class="model-wrapper">
-        <div id="model-biotecnologia" class="model-3d"></div>
+  
+    <!-- Pantalla 8: Cadena -->
+    <div id="screen8" class="screen">
+      <div id="screen8-image" class="screen-image">
+          <img src="./src/img/Recurso (23).png" alt="Cadena">
+      </div>
+      <div id="model-cadena-anim-wrapper" class="model-wrapper">
+          <div id="model-cadena" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(4)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(8)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-8" onclick="toggleHelp(8)">
     </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(4)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(7)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-7" onclick="toggleHelp(7)">
-  </div>
-
-  <!-- Pantalla 8: Cadena -->
-  <div id="screen8" class="screen">
-    <div id="screen8-image" class="screen-image">
-        <img src="./src/img/Recurso (23).png" alt="Cadena">
+  
+    <!-- Pantalla 9: Investigación -->
+    <div id="screen9" class="screen">
+      <div id="screen9-image" class="screen-image">
+          <img src="./src/img/Recurso (24).png" alt="Investigación">
+      </div>
+      <div id="model-investigacion-anim-wrapper" class="model-wrapper">
+          <div id="model-investigacion" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(4)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(9)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-9" onclick="toggleHelp(9)">
     </div>
-    <div id="model-cadena-anim-wrapper" class="model-wrapper">
-        <div id="model-cadena" class="model-3d"></div>
+  
+    <!-- Pantalla 10: Operaciones -->
+    <div id="screen10" class="screen">
+      <div id="screen10-image" class="screen-image">
+          <img src="./src/img/Recurso (27).png" alt="Operaciones">
+      </div>
+      <div id="model-operaciones-anim-wrapper" class="model-wrapper">
+          <div id="model-operaciones" class="model-3d"></div>
+      </div>
+      <div id="model-mapa-wrapper" class="model-wrapper">
+          <div id="model-mapa" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(4)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(10)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-10" onclick="toggleHelp(10)">
     </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(4)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(8)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-8" onclick="toggleHelp(8)">
-  </div>
-
-  <!-- Pantalla 9: Investigación -->
-  <div id="screen9" class="screen">
-    <div id="screen9-image" class="screen-image">
-        <img src="./src/img/Recurso (24).png" alt="Investigación">
+  
+    <!-- Pantalla 11: Menú Secundario -->
+    <div id="screen11" class="screen">
+      <div class="menu-circles-2">
+        <div id="circle-pharma" class="solid-circle-2" onclick="goToPharma()"></div>
+        <div id="circle-plantas" class="solid-circle-2" onclick="goToPlantas()"></div>
+        <div id="circle-investigacion2" class="solid-circle-2" onclick="goToInvestigacion2()"></div>
+        <div id="circle-microscopio" class="solid-circle-2" onclick="goToMicroscopio()"></div>
+        <div id="circle-engranaje" class="solid-circle-2" onclick="goToEngranaje()"></div>
+      </div>
+      <div id="screen11-image" class="screen-image">
+          <img src="./src/img/Recurso (21).png" alt="Menú Secundario">
+      </div>
+      <div id="model-menu2-wrapper" class="model-wrapper">
+          <div id="model-menu2" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(11)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-11" onclick="toggleHelp(11)">
     </div>
-    <div id="model-investigacion-anim-wrapper" class="model-wrapper">
-        <div id="model-investigacion" class="model-3d"></div>
+  
+    <!-- Pantalla 12 -->
+    <div id="screen12" class="screen">
+      <div id="screen12-image" class="screen-image">
+          <img src="./src/img/Recurso (32).png" alt="Plantas">
+      </div>
+      <div id="model-plantas-wrapper" class="model-wrapper">
+          <div id="model-plantas" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(11)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(12)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-12" onclick="toggleHelp(12)">
     </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(4)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(9)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-9" onclick="toggleHelp(9)">
-  </div>
-
-  <!-- Pantalla 10: Operaciones -->
-  <div id="screen10" class="screen">
-    <div id="screen10-image" class="screen-image">
-        <img src="./src/img/Recurso (27).png" alt="Operaciones">
+  
+    <!-- Pantalla 13 -->
+    <div id="screen13" class="screen">
+      <div id="screen13-image" class="screen-image">
+          <img src="./src/img/Recurso (4).png" alt="Investigación Detalle">
+      </div>
+      <div id="model-pharma-wrapper" class="model-wrapper">
+          <div id="model-pharma" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(11)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(13)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-13" onclick="toggleHelp(13)">
     </div>
-    <div id="model-operaciones-anim-wrapper" class="model-wrapper">
-        <div id="model-operaciones" class="model-3d"></div>
+  
+    <!-- Pantalla 14 -->
+    <div id="screen14" class="screen">
+      <div id="screen14-image" class="screen-image">
+          <img id="screen14-image-img" src="./src/img/Recurso (5).png" alt="Engranaje Investigación">
+      </div>
+      <div id="model-investigacion2-wrapper" class="model-wrapper">
+          <div id="model-investigacion2" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(11)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(14)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-14" onclick="toggleHelp(14)">
     </div>
-    <div id="model-mapa-wrapper" class="model-wrapper">
-        <div id="model-mapa" class="model-3d"></div>
+  
+    <!-- Pantalla 15 -->
+    <div id="screen15" class="screen">
+      <div id="screen15-image" class="screen-image">
+          <img src="./src/img/Recurso (6).png" alt="Pharma">
+      </div>
+      <div id="model-engranaje-wrapper" class="model-wrapper">
+          <div id="model-engranaje" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(11)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(15)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-15" onclick="toggleHelp(15)">
     </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(4)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(10)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-10" onclick="toggleHelp(10)">
-  </div>
-
-  <!-- Pantalla 11: Menú Secundario -->
-  <div id="screen11" class="screen">
-    <div id="menu-2">
-      <img class="menu-2-button" src="./src/img/Buttons/Recurso 9.png" alt="Menú Secundario" onclick="goToPharma()" style="top: 10.5%; left: 72%; z-index: 2;">
-      <img class="menu-2-button" src="./src/img/Buttons/Recurso 10.png" alt="Menú Secundario" onclick="goToPlantas()" style="top: 20.5%; left: 29.5%; z-index: 2;">
-      <img class="menu-2-button" src="./src/img/Buttons/Recurso 11 (2).png" alt="Menú Secundario" onclick="goToInvestigacion2()" style="top: 51%; left: 29%; width: 21%; z-index: 2;">
-      <img class="menu-2-button" src="./src/img/Buttons/Recurso 12.png" alt="Menú Secundario" onclick="goToMicroscopio()" style="top: 50.5%; left: 65.7%; width: 21%; z-index: 2;">
-      <img class="menu-2-button" src="./src/img/Buttons/Recurso 13.png" alt="Menú Secundario" onclick="goToEngranaje()" style="top: 39%; left: 47.3%;width: 21%; z-index: 2;">
+  
+    <!-- Pantalla 16 -->
+    <div id="screen16" class="screen">
+      <div id="screen16-image" class="screen-image">
+          <img src="./src/img/Recurso (7).png" alt="Microscopio">
+      </div>
+      <div id="model-microscopio-wrapper" class="model-wrapper">
+          <div id="model-microscopio" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(11)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(16)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-16" onclick="toggleHelp(16)">
     </div>
-    <div id="screen11-image" class="screen-image">
-        <img src="./src/img/Recurso (21).png" alt="Menú Secundario">
+  
+    <!-- Pantalla 17: Gráfico -->
+    <div id="screen17" class="screen">
+      <div id="screen17-image" class="screen-image">
+          <img src="./src/img/Recurso (13).png" alt="Gráfico">
+      </div>
+      <div id="model-grafico-wrapper" class="model-wrapper">
+          <div id="model-grafico" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(17)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-17" onclick="toggleHelp(17)">
     </div>
-    <div id="model-menu2-wrapper" class="model-wrapper">
-        <div id="model-menu2" class="model-3d"></div>
+  
+    <div id="screen18" class="screen">
+      <div id="screen18-image" class="screen-image">
+        <img id="fondo" src="./src/img/fondo.png" alt="Información">
+      </div>
+      <img id="btn1" src="./src/img/boton 1.png" alt="btn1" onclick="showScreen(19)">
+      <img id="btn2" src="./src/img/boton 2.png" alt="btn2" onclick="showScreen(20)">
     </div>
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(11)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-11" onclick="toggleHelp(11)">
-  </div>
-
-  <!-- Pantalla 12 -->
-  <div id="screen12" class="screen">
-    <div id="screen12-image" class="screen-image">
-        <img src="./src/img/Recurso (32).png" alt="Plantas">
+  
+    <div id="screen19" class="screen">
+      <div id="screen19-image" class="screen-image">
+          <img src="./src/img/Recurso (15).png" alt="Cajas 1">
+          <img id="fda" src="./src/img/Recurso (28).png" alt="Recurso 28">
+      </div>
+      <div id="model-cajas-wrapper" class="model-wrapper">
+          <div id="model-cajas" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (14).png" alt="Ayuda" class="help-button" onclick="toggleHelp(19)">
+      <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-19" onclick="toggleHelp(19)">
     </div>
-    <div id="model-plantas-wrapper" class="model-wrapper">
-        <div id="model-plantas" class="model-3d"></div>
+  
+    <div id="screen20" class="screen">
+      <div id="screen20-image" class="screen-image">
+          <img src="./src/img/Recurso (16).png" alt="Cajas 2">
+          <img id="fda" src="./src/img/Recurso (28).png" alt="Recurso 28">
+      </div>
+      <div id="model-cajas2-wrapper" class="model-wrapper">
+          <div id="model-cajas2" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (14).png" alt="Ayuda" class="help-button" onclick="toggleHelp(20)">
+      <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-20" onclick="toggleHelp(20)">
     </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(11)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(12)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-12" onclick="toggleHelp(12)">
-  </div>
-
-  <!-- Pantalla 13 -->
-  <div id="screen13" class="screen">
-    <div id="screen13-image" class="screen-image">
-        <img src="./src/img/Recurso (4).png" alt="Investigación Detalle">
-    </div>
-    <div id="model-pharma-wrapper" class="model-wrapper">
-        <div id="model-pharma" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(11)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(13)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-13" onclick="toggleHelp(13)">
-  </div>
-
-  <!-- Pantalla 14 -->
-  <div id="screen14" class="screen">
-    <div id="screen14-image" class="screen-image">
-        <img id="screen14-image-img" src="./src/img/Recurso (5).png" alt="Engranaje Investigación">
-    </div>
-    <div id="model-investigacion2-wrapper" class="model-wrapper">
-        <div id="model-investigacion2" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(11)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(14)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-14" onclick="toggleHelp(14)">
-  </div>
-
-  <!-- Pantalla 15 -->
-  <div id="screen15" class="screen">
-    <div id="screen15-image" class="screen-image">
-        <img src="./src/img/Recurso (6).png" alt="Pharma">
-    </div>
-    <div id="model-engranaje-wrapper" class="model-wrapper">
-        <div id="model-engranaje" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(11)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(15)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-15" onclick="toggleHelp(15)">
-  </div>
-
-  <!-- Pantalla 16 -->
-  <div id="screen16" class="screen">
-    <div id="screen16-image" class="screen-image">
-        <img src="./src/img/Recurso (7).png" alt="Microscopio">
-    </div>
-    <div id="model-microscopio-wrapper" class="model-wrapper">
-        <div id="model-microscopio" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(11)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(16)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-16" onclick="toggleHelp(16)">
-  </div>
-
-  <!-- Pantalla 17: Gráfico -->
-  <div id="screen17" class="screen">
-    <div id="screen17-image" class="screen-image">
-        <img src="./src/img/Recurso (13).png" alt="Gráfico">
-    </div>
-    <div id="model-grafico-wrapper" class="model-wrapper">
-        <div id="model-grafico" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(17)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-17" onclick="toggleHelp(17)">
-  </div>
-
-  <div id="screen18" class="screen">
-    <div id="screen18-image" class="screen-image">
-      <img id="fondo" src="./src/img/fondo.png" alt="Información">
-    </div>
-    <img id="btn1" src="./src/img/boton 1.png" alt="btn1" onclick="showScreen(20)">
-    <img id="btn2" src="./src/img/boton 2.png" alt="btn2" onclick="showScreen(19)">
-  </div>
-
-  <div id="screen19" class="screen">
-    <div id="screen19-image" class="screen-image">
-        <img src="./src/img/Recurso (15).png" alt="Cajas 1">
-        <img id="fda" src="./src/img/Recurso (28).png" alt="Recurso 28">
-    </div>
-    <div id="model-cajas-wrapper" class="model-wrapper">
-        <div id="model-cajas" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (14).png" alt="Ayuda" class="help-button" onclick="toggleHelp(19)">
-    <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-19" onclick="toggleHelp(19)">
-  </div>
-
-  <div id="screen20" class="screen">
-    <div id="screen20-image" class="screen-image">
-        <img src="./src/img/Recurso (16).png" alt="Cajas 2">
-        <img id="fda" src="./src/img/Recurso (28).png" alt="Recurso 28">
-    </div>
-    <div id="model-cajas2-wrapper" class="model-wrapper">
-        <div id="model-cajas2" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (14).png" alt="Ayuda" class="help-button" onclick="toggleHelp(20)">
-    <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-20" onclick="toggleHelp(20)">
-  </div>
-
-  <div id="screen21" class="screen">
-    <div class="content-wrapper">
-      <div class="model-container">
+  
+    <div id="screen21" class="screen">
+      <div id="screen21-image" class="screen-image">
         <img src="./src/img/Recurso (19).png" alt="Final">
       </div>
     </div>
-  </div>
-
-  <!-- Botones de navegación -->
-  <div class="nav-buttons">
-    <img id="prev-button" 
-      src="./src/img/Recurso (20).png" 
-      alt="Anterior" 
-      onclick="previousScreen()" 
-      class="nav-button">
-    <img id="next-button" 
-      src="./src/img/Recurso (36).png" 
-      alt="Siguiente" 
-      onclick="nextScreen()" 
-      class="nav-button">
-  </div>
-  </div>
+  
+    <!-- Botones de navegación -->
+    <div class="nav-buttons">
+      <img id="prev-button" 
+        src="./src/img/Recurso (20).png" 
+        alt="Anterior" 
+        onclick="previousScreen()" 
+        class="nav-button">
+      <img id="next-button" 
+        src="./src/img/Recurso (36).png" 
+        alt="Siguiente" 
+        onclick="nextScreen()" 
+        class="nav-button">
+    </div>
+    </div>
+  
+  
 </body>
 
 </html>
