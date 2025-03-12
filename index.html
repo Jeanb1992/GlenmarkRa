@@ -68,6 +68,27 @@
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+    // Inicializar la cámara
+    async function initCamera() {
+      try {
+        const videoElement = document.getElementById('camera-feed');
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            facingMode: 'environment',
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          } 
+        });
+        videoElement.srcObject = stream;
+        videoElement.play();
+      } catch (error) {
+        console.error('Error al inicializar la cámara:', error);
+      }
+    }
+
+    // Inicializar la cámara cuando se carga la página
+    window.addEventListener('DOMContentLoaded', initCamera);
+
     // Mover todas las funciones y variables dentro del módulo
     window.scenes = {};
     window.animations = {};
@@ -762,13 +783,14 @@
         position: relative;
         margin: 0 auto;
         overflow: visible;
-        background: rgba(255, 255, 255, 0.85);
+        background: rgba(255, 255, 255, 0.7);
         box-shadow: none;
         transition: all 0.3s ease;
         z-index: 1;
         /* Dimensiones base del contenedor */
         width: 1024px;
         height: 768px;
+        backdrop-filter: blur(5px);
     }
 
     body {
@@ -781,6 +803,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        position: relative;
     }
 
     .screen {
@@ -1653,6 +1676,17 @@
       height: 100%;
       object-fit: cover;
     }
+
+    /* Contenedor de video para la cámara */
+    #camera-feed {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -1;
+    }
   </style>
 </head>
 
@@ -1948,6 +1982,12 @@
       class="nav-button">
   </div>
   </div>
+
+  <!-- Contenedor de video para la cámara -->
+  <video id="camera-feed" autoplay loop muted>
+    <source src="./src/video/camera_feed.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
 </body>
 
 </html>
