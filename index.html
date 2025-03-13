@@ -777,6 +777,55 @@
       console.log('Navegando a Microscopio');
       showScreen(16);
     };
+
+    // Función para alternar pantalla completa
+    function toggleFullScreen() {
+      if (!document.fullscreenElement && 
+          !document.mozFullScreenElement && 
+          !document.webkitFullscreenElement && 
+          !document.msFullscreenElement) {
+        // Entrar en modo pantalla completa
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+          document.documentElement.msRequestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+          document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+      } else {
+        // Salir del modo pantalla completa
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      }
+    }
+
+    // Manejar doble toque para pantalla completa
+    let lastTap = 0;
+    document.addEventListener('touchend', function(event) {
+      const currentTime = new Date().getTime();
+      const tapLength = currentTime - lastTap;
+      
+      if (tapLength < 500 && tapLength > 0) {
+        // Doble toque detectado
+        event.preventDefault();
+        toggleFullScreen();
+      }
+      lastTap = currentTime;
+    });
+
+    // También permitir doble clic para computadoras
+    document.addEventListener('dblclick', function(event) {
+      toggleFullScreen();
+    });
   </script>
   <style>
     /* Prevenir arrastre y movimiento */
