@@ -3,12 +3,12 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>GlenmarkRA</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#000000">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="GlenmarkRA">
   <meta name="description" content="Aplicación de Realidad Aumentada de Glenmark">
   <link rel="apple-touch-icon" href="src/img/Icons/ios/180x180.png">
@@ -785,14 +785,27 @@
           !document.webkitFullscreenElement && 
           !document.msFullscreenElement) {
         // Entrar en modo pantalla completa
-        if (document.documentElement.requestFullscreen) {
-          document.documentElement.requestFullscreen();
-        } else if (document.documentElement.msRequestFullscreen) {
-          document.documentElement.msRequestFullscreen();
-        } else if (document.documentElement.mozRequestFullScreen) {
-          document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-          document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+        const element = document.documentElement;
+        if (element.requestFullscreen) {
+          element.requestFullscreen({ navigationUI: "hide" });
+        } else if (element.msRequestFullscreen) {
+          element.msRequestFullscreen({ navigationUI: "hide" });
+        } else if (element.mozRequestFullScreen) {
+          element.mozRequestFullScreen({ navigationUI: "hide" });
+        } else if (element.webkitRequestFullscreen) {
+          // Para iOS necesitamos usar ALLOW_KEYBOARD_INPUT
+          element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+          if (navigator.standalone) {
+            // Forzar orientación si está instalada como PWA
+            screen.orientation.lock(window.orientation === 0 ? "portrait" : "landscape")
+              .catch(() => console.log('Orientación no soportada'));
+          }
+        }
+
+        // Ocultar la UI del navegador en iOS
+        if (navigator.standalone) {
+          document.documentElement.style.webkitTouchCallout = 'none';
+          document.documentElement.style.webkitUserSelect = 'none';
         }
       } else {
         // Salir del modo pantalla completa
@@ -840,12 +853,13 @@
 
     body {
         margin: 0;
-        padding: 0;
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         overflow: hidden;
         font-family: Arial, sans-serif;
         background: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(5px);
         height: 100vh;
+        height: -webkit-fill-available;
         width: 100vw;
         display: flex;
         align-items: center;
@@ -860,6 +874,20 @@
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
+        -webkit-touch-callout: none;
+    }
+
+    /* Ajustes para modo pantalla completa */
+    :fullscreen, ::backdrop {
+        background: transparent;
+    }
+
+    :-webkit-full-screen {
+        background: transparent;
+    }
+
+    :-moz-full-screen {
+        background: transparent;
     }
 
     @media (orientation: portrait) {
