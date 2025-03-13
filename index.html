@@ -450,8 +450,8 @@
           break;
         case 3:
           setupModel('model-esfera-inicial', './src/assets/3d/gltf/esfera-inicial-estatica.gltf', {
-            scale: 110.0,
-            position: { x: -1.4, y: -0.59, z: 0 },
+            scale: 80.0,
+            position: { x: -1.1, y: -0.5, z: 0 },
             rotation: { x: 0, y: 0, z: 0 },
             cameraZ: 20
           });
@@ -575,14 +575,14 @@
           break;
         case 19:
           setupModel('model-cajas', './src/assets/3d/gltf/cajas.gltf', {
-            scale: 18.0,
+            scale: 15.0,
             position: { x: -0.15, y: -0.18, z: 0 },
             animate: true
           });
           break;
         case 20:
           setupModel('model-cajas2', './src/assets/3d/gltf/cajas.gltf', {
-            scale: 18.0,
+            scale: 15.0,
             position: { x: -0.15, y: -0.18, z: 0 },
             animate: true
           
@@ -779,19 +779,14 @@
     };
   </script>
   <style>
-    /* Contenedor principal base */
-    .contenedor {
-        position: relative;
-        margin: 0 auto;
-        overflow: visible;
-        background: rgba(255, 255, 255, 0.7);
-        box-shadow: none;
-        transition: all 0.3s ease;
-        z-index: 1;
-        /* Dimensiones base del contenedor */
-        width: 1024px;
-        height: 768px;
-        backdrop-filter: blur(5px);
+    /* Prevenir arrastre y movimiento */
+    html {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        position: fixed;
     }
 
     body {
@@ -799,12 +794,62 @@
         padding: 0;
         overflow: hidden;
         font-family: Arial, sans-serif;
-        background: transparent;
-        min-height: 100vh;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(5px);
+        height: 100vh;
+        width: 100vw;
         display: flex;
         align-items: center;
         justify-content: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    }
+
+    @media (orientation: portrait) {
+        body {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+        }
+        
+        .contenedor {
+            width: 100vw;
+            height: calc((100vw * 3/4) - 120px);
+            max-height: calc(100vh - 120px);
+        }
+    }
+
+    @media (orientation: landscape) {
+        body {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+        }
+        
+        .contenedor {
+            height: calc(100vh - 120px);
+            width: calc((100vh - 120px) * 4/3);
+            max-width: 100vw;
+        }
+    }
+
+    /* Contenedor principal base */
+    .contenedor {
         position: relative;
+        margin: auto;
+        overflow: visible;
+        box-shadow: none;
+        transition: all 0.3s ease;
+        z-index: 1;
+        /* Dimensiones base del contenedor */
+        width: 1024px;
+        height: 768px;
     }
 
     .screen {
@@ -924,11 +969,10 @@
         transform: scale(1.1);
     }
 
-    /* Media queries actualizados con valor fijo de 120px para la barra del navegador */
+    /* Media queries actualizados */
     @media (max-width: 1024px) {
         .contenedor {
             width: 100vw;
-            /* Usar 120px como valor fijo para la barra del navegador */
             height: calc(100vh - 120px);
             max-height: 768px;
             transform-origin: center center;
@@ -936,22 +980,28 @@
     }
 
     @media (orientation: portrait) {
+        body {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+        }
+        
         .contenedor {
             width: 100vw;
-            /* Usar proporción 4:3 con el offset fijo de 120px */
             height: calc((100vw * 3/4) - 120px);
             max-height: calc(100vh - 120px);
-            transform-origin: center center;
         }
     }
 
     @media (orientation: landscape) {
+        body {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+        }
+        
         .contenedor {
             height: calc(100vh - 120px);
-            /* Mantener proporción 4:3 con el nuevo alto */
             width: calc((100vh - 120px) * 4/3);
             max-width: 100vw;
-            transform-origin: center center;
         }
     }
 
@@ -1521,42 +1571,6 @@
         }
     }
 
-    @media (orientation: portrait) {
-        .contenedor {
-            width: 100%; /* Mismo ancho que en landscape pero ajustado */
-            height: 100%; /* Alto ajustado proporcionalmente */
-            transform: scale(0.85);
-            transform-origin: center center;
-        }
-
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #ffffff;
-            overflow: hidden;
-            height: 100vh;
-        }
-    }
-
-    @media (orientation: landscape) {
-        .contenedor {
-            height: calc(100vh * 0.9); /* 90% del alto de la ventana */
-            width: calc(133.33vh * 0.9); /* Mantener proporción 4:3 */
-            transform: scale(0.85);
-            transform-origin: center center;
-        }
-
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #ffffff;
-            overflow: hidden;
-            height: 100vh;
-        }
-    }
-
     /* Ajustes específicos para los botones con problemas de color */
     #cadena-btn,
     #biotecnologia-btn,
@@ -1702,302 +1716,317 @@
       width: 100vw;
       height: 100vh;
       object-fit: cover;
-      z-index: -1;
+      z-index: -2;
+    }
+
+    /* Fondo semitransparente */
+    .background-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(5px);
+        z-index: -1;
     }
   </style>
 </head>
 
 <body>
-<div class="contenedor">
-  <!-- Pantalla 2: Inicio -->
-  <div id="screen2" class="screen active">
-    <div id="screen2-image" class="screen-image">
-        <img src="./src/img/Recurso (37).png" alt="Inicio">
+  <div class="background-overlay"></div>
+  <div class="contenedor">
+    <!-- Pantalla 2: Inicio -->
+    <div id="screen2" class="screen active">
+      <div id="screen2-image" class="screen-image">
+          <img src="./src/img/Recurso (37).png" alt="Inicio">
+      </div>
+      <div id="model-boton-comenzar-wrapper" class="model-wrapper">
+          <div id="model-boton-comenzar" class="model-3d"></div>
+      </div>
     </div>
-    <div id="model-boton-comenzar-wrapper" class="model-wrapper">
-        <div id="model-boton-comenzar" class="model-3d"></div>
-    </div>
-  </div>
 
-  <!-- Pantalla 3: Introducción -->
-  <div id="screen3" class="screen">
-    <div id="screen3-image" class="screen-image">
-        <img src="./src/img/Recurso (38).png" alt="Introducción">
+    <!-- Pantalla 3: Introducción -->
+    <div id="screen3" class="screen">
+      <div id="screen3-image" class="screen-image">
+          <img src="./src/img/Recurso (38).png" alt="Introducción">
+      </div>
+      <div id="model-esfera-inicial-wrapper" class="model-wrapper">
+          <div id="model-esfera-inicial" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(3)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-3" onclick="toggleHelp(3)">
     </div>
-    <div id="model-esfera-inicial-wrapper" class="model-wrapper">
-        <div id="model-esfera-inicial" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(3)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-3" onclick="toggleHelp(3)">
-  </div>
 
-  <!-- Pantalla 4: Menú Principal -->
-  <div id="screen4" class="screen">
-    <div class="menu-circles">
-      <div id="circle-operaciones" class="solid-circle" onclick="goToOperaciones()"></div>
-      <div id="circle-investigacion" class="solid-circle" onclick="goToInvestigacion()"></div>
-      <div id="circle-cadena" class="solid-circle" onclick="goToCadena()"></div>
-      <div id="circle-biotecnologia" class="solid-circle" onclick="goToBiotecnologia()"></div>
-      <div id="circle-vision" class="solid-circle" onclick="goToVision()"></div>
-      <div id="circle-glenmark" class="solid-circle" onclick="goToGlenmark()"></div>
+    <!-- Pantalla 4: Menú Principal -->
+    <div id="screen4" class="screen">
+      <div class="menu-circles">
+        <div id="circle-operaciones" class="solid-circle" onclick="goToOperaciones()"></div>
+        <div id="circle-investigacion" class="solid-circle" onclick="goToInvestigacion()"></div>
+        <div id="circle-cadena" class="solid-circle" onclick="goToCadena()"></div>
+        <div id="circle-biotecnologia" class="solid-circle" onclick="goToBiotecnologia()"></div>
+        <div id="circle-vision" class="solid-circle" onclick="goToVision()"></div>
+        <div id="circle-glenmark" class="solid-circle" onclick="goToGlenmark()"></div>
+      </div>
+      <div id="model-menu-inicial-wrapper" class="model-wrapper">
+          <div id="model-menu-inicial" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(4)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-4" onclick="toggleHelp(4)">
     </div>
-    <div id="model-menu-inicial-wrapper" class="model-wrapper">
-        <div id="model-menu-inicial" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(4)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-4" onclick="toggleHelp(4)">
-  </div>
 
-  <!-- Pantalla 5: Glenmark -->
-  <div id="screen5" class="screen">
-    <div id="screen5-image" class="screen-image">
-        <img src="./src/img/Recurso (26).png" alt="Glenmark">
+    <!-- Pantalla 5: Glenmark -->
+    <div id="screen5" class="screen">
+      <div id="screen5-image" class="screen-image">
+          <img src="./src/img/Recurso (26).png" alt="Glenmark">
+      </div>
+      <div id="model-glenmark-anim-wrapper" class="model-wrapper">
+          <div id="model-glenmark" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(4)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(5)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-5" onclick="toggleHelp(5)">
     </div>
-    <div id="model-glenmark-anim-wrapper" class="model-wrapper">
-        <div id="model-glenmark" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(4)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(5)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-5" onclick="toggleHelp(5)">
-  </div>
 
-  <!-- Pantalla 6: Visión -->
-  <div id="screen6" class="screen">
-    <div id="screen6-image" class="screen-image">
-        <img src="./src/img/Recurso (25).png" alt="Visión">
+    <!-- Pantalla 6: Visión -->
+    <div id="screen6" class="screen">
+      <div id="screen6-image" class="screen-image">
+          <img src="./src/img/Recurso (25).png" alt="Visión">
+      </div>
+      <div id="model-vision-anim-wrapper" class="model-wrapper">
+          <div id="model-vision" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(4)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(6)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-6" onclick="toggleHelp(6)">
     </div>
-    <div id="model-vision-anim-wrapper" class="model-wrapper">
-        <div id="model-vision" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(4)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(6)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-6" onclick="toggleHelp(6)">
-  </div>
 
-  <!-- Pantalla 7: Biotecnología -->
-  <div id="screen7" class="screen">
-    <div id="screen7-image" class="screen-image">
-        <img src="./src/img/Recurso (41).png" alt="Biotecnología">
+    <!-- Pantalla 7: Biotecnología -->
+    <div id="screen7" class="screen">
+      <div id="screen7-image" class="screen-image">
+          <img src="./src/img/Recurso (41).png" alt="Biotecnología">
+      </div>
+      <div id="model-biotecnologia-anim-wrapper" class="model-wrapper">
+          <div id="model-biotecnologia" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(4)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(7)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-7" onclick="toggleHelp(7)">
     </div>
-    <div id="model-biotecnologia-anim-wrapper" class="model-wrapper">
-        <div id="model-biotecnologia" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(4)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(7)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-7" onclick="toggleHelp(7)">
-  </div>
 
-  <!-- Pantalla 8: Cadena -->
-  <div id="screen8" class="screen">
-    <div id="screen8-image" class="screen-image">
-        <img src="./src/img/Recurso (23).png" alt="Cadena">
+    <!-- Pantalla 8: Cadena -->
+    <div id="screen8" class="screen">
+      <div id="screen8-image" class="screen-image">
+          <img src="./src/img/Recurso (23).png" alt="Cadena">
+      </div>
+      <div id="model-cadena-anim-wrapper" class="model-wrapper">
+          <div id="model-cadena" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(4)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(8)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-8" onclick="toggleHelp(8)">
     </div>
-    <div id="model-cadena-anim-wrapper" class="model-wrapper">
-        <div id="model-cadena" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(4)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(8)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-8" onclick="toggleHelp(8)">
-  </div>
 
-  <!-- Pantalla 9: Investigación -->
-  <div id="screen9" class="screen">
-    <div id="screen9-image" class="screen-image">
-        <img src="./src/img/Recurso (24).png" alt="Investigación">
+    <!-- Pantalla 9: Investigación -->
+    <div id="screen9" class="screen">
+      <div id="screen9-image" class="screen-image">
+          <img src="./src/img/Recurso (24).png" alt="Investigación">
+      </div>
+      <div id="model-investigacion-anim-wrapper" class="model-wrapper">
+          <div id="model-investigacion" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(4)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(9)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-9" onclick="toggleHelp(9)">
     </div>
-    <div id="model-investigacion-anim-wrapper" class="model-wrapper">
-        <div id="model-investigacion" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(4)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(9)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-9" onclick="toggleHelp(9)">
-  </div>
 
-  <!-- Pantalla 10: Operaciones -->
-  <div id="screen10" class="screen">
-    <div id="screen10-image" class="screen-image">
-        <img src="./src/img/Recurso (27).png" alt="Operaciones">
+    <!-- Pantalla 10: Operaciones -->
+    <div id="screen10" class="screen">
+      <div id="screen10-image" class="screen-image">
+          <img src="./src/img/Recurso (27).png" alt="Operaciones">
+      </div>
+      <div id="model-operaciones-anim-wrapper" class="model-wrapper">
+          <div id="model-operaciones" class="model-3d"></div>
+      </div>
+      <div id="model-mapa-wrapper" class="model-wrapper">
+          <div id="model-mapa" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(4)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(10)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-10" onclick="toggleHelp(10)">
     </div>
-    <div id="model-operaciones-anim-wrapper" class="model-wrapper">
-        <div id="model-operaciones" class="model-3d"></div>
-    </div>
-    <div id="model-mapa-wrapper" class="model-wrapper">
-        <div id="model-mapa" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(4)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(10)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-10" onclick="toggleHelp(10)">
-  </div>
 
-  <!-- Pantalla 11: Menú Secundario -->
-  <div id="screen11" class="screen">
-    <div class="menu-circles-2">
-      <div id="circle-pharma" class="solid-circle-2" onclick="goToPharma()"></div>
-      <div id="circle-plantas" class="solid-circle-2" onclick="goToPlantas()"></div>
-      <div id="circle-investigacion2" class="solid-circle-2" onclick="goToInvestigacion2()"></div>
-      <div id="circle-microscopio" class="solid-circle-2" onclick="goToMicroscopio()"></div>
-      <div id="circle-engranaje" class="solid-circle-2" onclick="goToEngranaje()"></div>
+    <!-- Pantalla 11: Menú Secundario -->
+    <div id="screen11" class="screen">
+      <div class="menu-circles-2">
+        <div id="circle-pharma" class="solid-circle-2" onclick="goToPharma()"></div>
+        <div id="circle-plantas" class="solid-circle-2" onclick="goToPlantas()"></div>
+        <div id="circle-investigacion2" class="solid-circle-2" onclick="goToInvestigacion2()"></div>
+        <div id="circle-microscopio" class="solid-circle-2" onclick="goToMicroscopio()"></div>
+        <div id="circle-engranaje" class="solid-circle-2" onclick="goToEngranaje()"></div>
+      </div>
+      <div id="screen11-image" class="screen-image">
+          <img src="./src/img/Recurso (21).png" alt="Menú Secundario">
+      </div>
+      <div id="model-menu2-wrapper" class="model-wrapper">
+          <div id="model-menu2" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(11)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-11" onclick="toggleHelp(11)">
     </div>
-    <div id="screen11-image" class="screen-image">
-        <img src="./src/img/Recurso (21).png" alt="Menú Secundario">
-    </div>
-    <div id="model-menu2-wrapper" class="model-wrapper">
-        <div id="model-menu2" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(11)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-11" onclick="toggleHelp(11)">
-  </div>
 
-  <!-- Pantalla 12 -->
-  <div id="screen12" class="screen">
-    <div id="screen12-image" class="screen-image">
-        <img src="./src/img/Recurso (32).png" alt="Plantas">
+    <!-- Pantalla 12 -->
+    <div id="screen12" class="screen">
+      <div id="screen12-image" class="screen-image">
+          <img src="./src/img/Recurso (32).png" alt="Plantas">
+      </div>
+      <div id="model-plantas-wrapper" class="model-wrapper">
+          <div id="model-plantas" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(11)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(12)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-12" onclick="toggleHelp(12)">
     </div>
-    <div id="model-plantas-wrapper" class="model-wrapper">
-        <div id="model-plantas" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(11)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(12)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-12" onclick="toggleHelp(12)">
-  </div>
 
-  <!-- Pantalla 13 -->
-  <div id="screen13" class="screen">
-    <div id="screen13-image" class="screen-image">
-        <img src="./src/img/Recurso (4).png" alt="Investigación Detalle">
+    <!-- Pantalla 13 -->
+    <div id="screen13" class="screen">
+      <div id="screen13-image" class="screen-image">
+          <img src="./src/img/Recurso (4).png" alt="Investigación Detalle">
+      </div>
+      <div id="model-pharma-wrapper" class="model-wrapper">
+          <div id="model-pharma" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(11)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(13)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-13" onclick="toggleHelp(13)">
     </div>
-    <div id="model-pharma-wrapper" class="model-wrapper">
-        <div id="model-pharma" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(11)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(13)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-13" onclick="toggleHelp(13)">
-  </div>
 
-  <!-- Pantalla 14 -->
-  <div id="screen14" class="screen">
-    <div id="screen14-image" class="screen-image">
-        <img id="screen14-image-img" src="./src/img/Recurso (5).png" alt="Engranaje Investigación">
+    <!-- Pantalla 14 -->
+    <div id="screen14" class="screen">
+      <div id="screen14-image" class="screen-image">
+          <img id="screen14-image-img" src="./src/img/Recurso (5).png" alt="Engranaje Investigación">
+      </div>
+      <div id="model-investigacion2-wrapper" class="model-wrapper">
+          <div id="model-investigacion2" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(11)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(14)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-14" onclick="toggleHelp(14)">
     </div>
-    <div id="model-investigacion2-wrapper" class="model-wrapper">
-        <div id="model-investigacion2" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(11)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(14)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-14" onclick="toggleHelp(14)">
-  </div>
 
-  <!-- Pantalla 15 -->
-  <div id="screen15" class="screen">
-    <div id="screen15-image" class="screen-image">
-        <img src="./src/img/Recurso (6).png" alt="Pharma">
+    <!-- Pantalla 15 -->
+    <div id="screen15" class="screen">
+      <div id="screen15-image" class="screen-image">
+          <img src="./src/img/Recurso (6).png" alt="Pharma">
+      </div>
+      <div id="model-engranaje-wrapper" class="model-wrapper">
+          <div id="model-engranaje" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(11)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(15)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-15" onclick="toggleHelp(15)">
     </div>
-    <div id="model-engranaje-wrapper" class="model-wrapper">
-        <div id="model-engranaje" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(11)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(15)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-15" onclick="toggleHelp(15)">
-  </div>
 
-  <!-- Pantalla 16 -->
-  <div id="screen16" class="screen">
-    <div id="screen16-image" class="screen-image">
-        <img src="./src/img/Recurso (7).png" alt="Microscopio">
+    <!-- Pantalla 16 -->
+    <div id="screen16" class="screen">
+      <div id="screen16-image" class="screen-image">
+          <img src="./src/img/Recurso (7).png" alt="Microscopio">
+      </div>
+      <div id="model-microscopio-wrapper" class="model-wrapper">
+          <div id="model-microscopio" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (35).png" alt="Volver" 
+          class="return-button" 
+          onclick="showScreen(11)">
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(16)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-16" onclick="toggleHelp(16)">
     </div>
-    <div id="model-microscopio-wrapper" class="model-wrapper">
-        <div id="model-microscopio" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (35).png" alt="Volver" 
-        class="return-button" 
-        onclick="showScreen(11)">
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(16)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-16" onclick="toggleHelp(16)">
-  </div>
 
-  <!-- Pantalla 17: Gráfico -->
-  <div id="screen17" class="screen">
-    <div id="screen17-image" class="screen-image">
-        <img src="./src/img/Recurso (13).png" alt="Gráfico">
+    <!-- Pantalla 17: Gráfico -->
+    <div id="screen17" class="screen">
+      <div id="screen17-image" class="screen-image">
+          <img src="./src/img/Recurso (13).png" alt="Gráfico">
+      </div>
+      <div id="model-grafico-wrapper" class="model-wrapper">
+          <div id="model-grafico" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(17)">
+      <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-17" onclick="toggleHelp(17)">
     </div>
-    <div id="model-grafico-wrapper" class="model-wrapper">
-        <div id="model-grafico" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (34).png" alt="Ayuda" class="help-button" onclick="toggleHelp(17)">
-    <img src="./src/img/Recurso (33).png" alt="Ayuda Info" class="help-info" id="help-info-17" onclick="toggleHelp(17)">
-  </div>
 
-  <div id="screen18" class="screen">
-    <div id="screen18-image" class="screen-image">
-      <img id="fondo" src="./src/img/fondo.png" alt="Información">
+    <div id="screen18" class="screen">
+      <div id="screen18-image" class="screen-image">
+        <img id="fondo" src="./src/img/fondo.png" alt="Información">
+      </div>
+      <img id="btn1" src="./src/img/boton 1.png" alt="btn1" onclick="showScreen(19)">
+      <img id="btn2" src="./src/img/boton 2.png" alt="btn2" onclick="showScreen(20)">
     </div>
-    <img id="btn1" src="./src/img/boton 1.png" alt="btn1" onclick="showScreen(19)">
-    <img id="btn2" src="./src/img/boton 2.png" alt="btn2" onclick="showScreen(20)">
-  </div>
 
-  <div id="screen19" class="screen">
-    <div id="screen19-image" class="screen-image">
-        <img src="./src/img/Recurso (15).png" alt="Cajas 1">
-        <img id="fda" src="./src/img/Recurso (28).png" alt="Recurso 28">
+    <div id="screen19" class="screen">
+      <div id="screen19-image" class="screen-image">
+          <img src="./src/img/Recurso (15).png" alt="Cajas 1">
+          <img id="fda" src="./src/img/Recurso (28).png" alt="Recurso 28">
+      </div>
+      <div id="model-cajas-wrapper" class="model-wrapper">
+          <div id="model-cajas" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (14).png" alt="Ayuda" class="help-button" onclick="toggleHelp(19)">
+      <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-19" onclick="toggleHelp(19)">
     </div>
-    <div id="model-cajas-wrapper" class="model-wrapper">
-        <div id="model-cajas" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (14).png" alt="Ayuda" class="help-button" onclick="toggleHelp(19)">
-    <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-19" onclick="toggleHelp(19)">
-  </div>
 
-  <div id="screen20" class="screen">
-    <div id="screen20-image" class="screen-image">
-        <img src="./src/img/Recurso (16).png" alt="Cajas 2">
-        <img id="fda" src="./src/img/Recurso (28).png" alt="Recurso 28">
+    <div id="screen20" class="screen">
+      <div id="screen20-image" class="screen-image">
+          <img src="./src/img/Recurso (16).png" alt="Cajas 2">
+          <img id="fda" src="./src/img/Recurso (28).png" alt="Recurso 28">
+      </div>
+      <div id="model-cajas2-wrapper" class="model-wrapper">
+          <div id="model-cajas2" class="model-3d"></div>
+      </div>
+      <img src="./src/img/Recurso (14).png" alt="Ayuda" class="help-button" onclick="toggleHelp(20)">
+      <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-20" onclick="toggleHelp(20)">
     </div>
-    <div id="model-cajas2-wrapper" class="model-wrapper">
-        <div id="model-cajas2" class="model-3d"></div>
-    </div>
-    <img src="./src/img/Recurso (14).png" alt="Ayuda" class="help-button" onclick="toggleHelp(20)">
-    <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-20" onclick="toggleHelp(20)">
-  </div>
 
-  <div id="screen21" class="screen">
-    <div id="screen21-image" class="screen-image">
-      <img src="./src/img/Recurso (19).png" alt="Final">
+    <div id="screen21" class="screen">
+      <div id="screen21-image" class="screen-image">
+        <img src="./src/img/Recurso (19).png" alt="Final">
+      </div>
     </div>
-  </div>
 
-  <!-- Botones de navegación -->
-  <div class="nav-buttons">
-    <img id="prev-button" 
-      src="./src/img/Recurso (20).png" 
-      alt="Anterior" 
-      onclick="previousScreen()" 
-      class="nav-button">
-    <img id="next-button" 
-      src="./src/img/Recurso (36).png" 
-      alt="Siguiente" 
-      onclick="nextScreen()" 
-      class="nav-button">
-  </div>
+    <!-- Botones de navegación -->
+    <div class="nav-buttons">
+      <img id="prev-button" 
+        src="./src/img/Recurso (20).png" 
+        alt="Anterior" 
+        onclick="previousScreen()" 
+        class="nav-button">
+      <img id="next-button" 
+        src="./src/img/Recurso (36).png" 
+        alt="Siguiente" 
+        onclick="nextScreen()" 
+        class="nav-button">
+    </div>
   </div>
 
   <!-- Contenedor de video para la cámara -->
