@@ -209,8 +209,8 @@
       directionalLight.position.set(5, 5, 5);
       scene.add(directionalLight);
 
-      // Solo crear controles si no están explícitamente desactivados
-      if (options.controls !== false) {
+      // Solo crear controles si están explícitamente activados
+      if (options.controls === true) {
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
@@ -516,8 +516,8 @@
             animate: true
           });
           setupModel('model-mapa', './src/assets/3d/gltf/mapa-animado.gltf', {
-            scale: 20.0,
-            position: { x: -0.25, y: 0.5, z: 0 },
+            scale: 14.0,
+            position: { x: -0.2, y: 0.35, z: 0 },
             rotation: { x: 0.9, y: 0, z: 0 },
             animate: true,
             cameraZ: 10
@@ -532,43 +532,43 @@
           break;
         case 12:
           setupModel('model-plantas', './src/assets/3d/gltf/boton-esfera-plantas-animacion.gltf', {
-            scale: 35.0,
-            position: { x: -0.45, y: -0.35, z: 0 },
+            scale: 30.0,
+            position: { x: -0.37, y: -0.32, z: 0 },
             animate: true
           });
           break;
         case 13:
           setupModel('model-pharma', './src/assets/3d/gltf/boton-esfera-investigacion-animacion.gltf', {
-            scale: 35.0,
-            position: { x: -0.5, y: -0.35, z: 0 },
+            scale: 30.0,
+            position: { x: -0.4, y: -0.35, z: 0 },
             animate: true
           });
           break;
         case 14:
           setupModel('model-investigacion2', './src/assets/3d/gltf/boton-engranaje-investigacion-animacion.gltf', {
-            scale: 35.0,
-            position: { x: -0.43, y: -0.35, z: 0 },
+            scale: 30.0,
+            position: { x: -0.38, y: -0.3, z: 0 },
             animate: true
           });
           break;
         case 15:
           setupModel('model-engranaje', './src/assets/3d/gltf/boton-engranaje-pharma-animacion.gltf', {
-            scale: 35.0,
-            position: { x: -0.45, y: -0.4, z: 0 },
+            scale: 30.0,
+            position: { x: -0.4, y: -0.33, z: 0 },
             animate: true
           });
           break;
         case 16:
           setupModel('model-microscopio', './src/assets/3d/gltf/boton-engranaje-microscopio-animacion.gltf', {
-            scale: 35.0,
-            position: { x: -0.45, y: -0.35, z: 0 },
+            scale: 30.0,
+            position: { x: -0.45, y: -0.3, z: 0 },
             animate: true
           });
           break;
         case 17:
           setupModel('model-grafico', './src/assets/3d/gltf/grafico-barras-animado.gltf', {
-            scale: 40.0,
-            position: { x: -0.34, y: -0.37, z: 0 },
+            scale: 33.0,
+            position: { x: -0.3, y: -0.32, z: 0 },
             rotation: { x: 0, y: -(Math.PI * -30) / 180, z: 0 },
             animate: true
           });
@@ -1556,8 +1556,8 @@
 
     .help-info {
         position: fixed;
-        bottom: 3vh;
-        left: 3.5vw;
+        bottom: 4vh;
+        left: 5.2vw;
         width: 27vw;
         min-width: 200px;
         z-index: 999;
@@ -1580,7 +1580,7 @@
         }
     }
     #help-info-19 , #help-info-20 {
-      left: 6%;
+      left: 5%;
       width: 70%;
     }
     /* Mantener cursor pointer solo en elementos interactivos */
