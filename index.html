@@ -17,8 +17,8 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', async () => {
         try {
-          const registration = await navigator.serviceWorker.register('/sw.js', {
-            scope: '/'
+          const registration = await navigator.serviceWorker.register('./sw.js', {
+            scope: './'
           });
           console.log('Service Worker registrado con éxito:', registration.scope);
 
@@ -34,20 +34,34 @@
               }
             });
           });
+
+          // Manejar eventos offline/online
+          window.addEventListener('offline', () => {
+            console.log('La aplicación está offline');
+            document.body.classList.add('offline-mode');
+          });
+
+          window.addEventListener('online', () => {
+            console.log('La aplicación está online');
+            document.body.classList.remove('offline-mode');
+            // Intentar actualizar el Service Worker
+            registration.update();
+          });
+
+          // Pre-cachear recursos importantes
+          if (registration.active) {
+            const cache = await caches.open('static-v2');
+            const resources = [
+              './',
+              './index.html',
+              './manifest.json',
+              './sw.js'
+            ];
+            await cache.addAll(resources);
+          }
         } catch (error) {
           console.error('Error al registrar el Service Worker:', error);
         }
-      });
-
-      // Manejar errores de red
-      window.addEventListener('offline', () => {
-        console.log('La aplicación está offline');
-        // Aquí puedes mostrar un mensaje al usuario
-      });
-
-      window.addEventListener('online', () => {
-        console.log('La aplicación está online');
-        // Aquí puedes actualizar la UI
       });
     }
   </script>
