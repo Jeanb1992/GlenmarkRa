@@ -1,6 +1,6 @@
-const CACHE_NAME = 'glenmark-ra-v2';
-const STATIC_CACHE = 'static-v2';
-const DYNAMIC_CACHE = 'dynamic-v2';
+const CACHE_NAME = 'glenmark-ra-v3';
+const STATIC_CACHE = 'static-v3';
+const DYNAMIC_CACHE = 'dynamic-v3';
 
 // Lista de recursos a cachear
 const STATIC_ASSETS = [
@@ -79,7 +79,7 @@ const STATIC_ASSETS = [
   './src/img/Icons/ios/80.png',
   './src/img/Icons/ios/76.png',
   './src/img/Icons/ios/60.png',
-  // CDN Resources
+  // CDN Resources - Cachear localmente
   'https://unpkg.com/three@0.158.0/build/three.module.js',
   'https://unpkg.com/three@0.158.0/examples/jsm/loaders/GLTFLoader.js',
   'https://unpkg.com/three@0.158.0/examples/jsm/controls/OrbitControls.js'
@@ -89,23 +89,19 @@ const STATIC_ASSETS = [
 self.addEventListener('install', event => {
   event.waitUntil(
     Promise.all([
-      // Cachear recursos estáticos
       caches.open(STATIC_CACHE).then(cache => {
-        console.log('Cacheando recursos estáticos');
+        console.log('Precacheando recursos estáticos');
         return cache.addAll(STATIC_ASSETS);
       }),
-      // Crear cache dinámico
       caches.open(DYNAMIC_CACHE)
-    ])
-    .then(() => self.skipWaiting()) // Forzar activación inmediata
+    ]).then(() => self.skipWaiting())
   );
 });
 
-// Activar el Service Worker
+// Activar el Service Worker y limpiar caches antiguos
 self.addEventListener('activate', event => {
   event.waitUntil(
     Promise.all([
-      // Limpiar caches antiguos
       caches.keys().then(keys => {
         return Promise.all(
           keys.map(key => {
@@ -116,59 +112,53 @@ self.addEventListener('activate', event => {
           })
         );
       }),
-      // Tomar control inmediatamente
       self.clients.claim()
     ])
   );
 });
 
-// Función para verificar si una URL es de un CDN permitido
-const isAllowedCDN = (url) => {
-  const allowedDomains = [
-    'unpkg.com'
-  ];
-  return allowedDomains.some(domain => url.includes(domain));
-};
-
-// Interceptar peticiones
+// Estrategia Cache First con fallback a network
 self.addEventListener('fetch', event => {
+  // Ignorar las peticiones de chrome-extension
+  if (event.request.url.startsWith('chrome-extension://')) {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then(cachedResponse => {
-        // Si encontramos una respuesta en cache, la devolvemos
         if (cachedResponse) {
+          // Si está en cache, lo devolvemos inmediatamente
           return cachedResponse;
         }
 
+        // Si no está en cache, intentamos fetchearlo
         return fetch(event.request)
-          .then(response => {
-            // Si la respuesta no es válida, devolvemos el error
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              // Si es un recurso de CDN permitido, intentamos cachearlo
-              if (isAllowedCDN(event.request.url)) {
-                return caches.open(DYNAMIC_CACHE)
-                  .then(cache => {
-                    cache.put(event.request, response.clone());
-                    return response;
-                  });
-              }
-              return response;
+          .then(networkResponse => {
+            // Verificar si la respuesta es válida
+            if (!networkResponse || networkResponse.status !== 200) {
+              return networkResponse;
             }
 
-            // Clonar la respuesta antes de cachearla
-            const responseToCache = response.clone();
-
-            // Cachear la nueva respuesta
+            // Guardar en cache dinámica
+            const responseToCache = networkResponse.clone();
             caches.open(DYNAMIC_CACHE)
               .then(cache => {
                 cache.put(event.request, responseToCache);
               });
 
-            return response;
+            return networkResponse;
           })
           .catch(error => {
-            // Si falla la red, intentamos devolver una versión cacheada
-            return caches.match(event.request);
+            // Si falla la red y es una petición de página
+            if (event.request.mode === 'navigate') {
+              // Devolver la página offline
+              return caches.match('./index.html');
+            }
+            
+            // Para otros recursos, podemos devolver un error o un recurso por defecto
+            console.error('Error en fetch:', error);
+            return new Response('Error de red');
           });
       })
   );

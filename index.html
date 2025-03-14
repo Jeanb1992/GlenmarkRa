@@ -6,10 +6,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>GlenmarkRA</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#000000">
+  
+  <!-- Meta tags específicos para iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="GlenmarkRA">
+  <meta name="theme-color" content="#000000">
+  
+  <!-- Iconos para iOS -->
+  <link rel="apple-touch-icon" href="src/img/Icons/ios/180.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="src/img/Icons/ios/152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="src/img/Icons/ios/180.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="src/img/Icons/ios/167.png">
+  
+  <!-- Splash screens para iOS -->
+  <link rel="apple-touch-startup-image" href="src/img/Icons/ios/splash.png">
+  
+  <!-- Prevenir el modo standalone en iOS -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GlenmarkRA">
+  
   <meta name="description" content="Aplicación de Realidad Aumentada de Glenmark">
   <link rel="apple-touch-icon" href="src/img/Icons/ios/180x180.png">
   
@@ -17,17 +33,32 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', async () => {
         try {
+          // Registrar el Service Worker
           const registration = await navigator.serviceWorker.register('./sw.js', {
             scope: './'
           });
           console.log('Service Worker registrado con éxito:', registration.scope);
+
+          // Pre-cachear recursos importantes inmediatamente
+          const cache = await caches.open('static-v3');
+          const resourcesToCache = [
+            './',
+            './index.html',
+            './manifest.json',
+            './sw.js',
+            // Agregar las URLs de Three.js
+            'https://unpkg.com/three@0.158.0/build/three.module.js',
+            'https://unpkg.com/three@0.158.0/examples/jsm/loaders/GLTFLoader.js',
+            'https://unpkg.com/three@0.158.0/examples/jsm/controls/OrbitControls.js'
+          ];
+          await cache.addAll(resourcesToCache);
 
           // Verificar actualizaciones
           registration.addEventListener('updatefound', () => {
             const newWorker = registration.installing;
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                // Hay una nueva versión disponible
+                // Nueva versión disponible
                 if (confirm('Hay una nueva versión disponible. ¿Desea actualizar?')) {
                   window.location.reload();
                 }
@@ -39,26 +70,25 @@
           window.addEventListener('offline', () => {
             console.log('La aplicación está offline');
             document.body.classList.add('offline-mode');
+            // Mostrar mensaje al usuario
+            const offlineMessage = document.createElement('div');
+            offlineMessage.id = 'offline-message';
+            offlineMessage.textContent = 'Modo sin conexión';
+            document.body.appendChild(offlineMessage);
           });
 
           window.addEventListener('online', () => {
             console.log('La aplicación está online');
             document.body.classList.remove('offline-mode');
-            // Intentar actualizar el Service Worker
+            // Remover mensaje offline si existe
+            const offlineMessage = document.getElementById('offline-message');
+            if (offlineMessage) {
+              offlineMessage.remove();
+            }
+            // Actualizar el Service Worker
             registration.update();
           });
 
-          // Pre-cachear recursos importantes
-          if (registration.active) {
-            const cache = await caches.open('static-v2');
-            const resources = [
-              './',
-              './index.html',
-              './manifest.json',
-              './sw.js'
-            ];
-            await cache.addAll(resources);
-          }
         } catch (error) {
           console.error('Error al registrar el Service Worker:', error);
         }
@@ -1897,6 +1927,19 @@
         backdrop-filter: blur(5px);
         z-index: -1;
     }
+
+    /* Estilos para el mensaje offline */
+    #offline-message {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        z-index: 9999;
+    }
   </style>
 </head>
 
@@ -2199,6 +2242,8 @@
     <source src="./src/video/camera_feed.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
+
+  <div id="offline-message">Modo sin conexión</div>
 </body>
 
 </html>
