@@ -5,8 +5,8 @@
   "start_url": "./",
   "id": "./",
   "scope": "./",
-  "display": "fullscreen",
-  "display_override": ["fullscreen", "standalone"],
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "landscape",
   "background_color": "#000000",
   "theme_color": "#000000",
@@ -140,12 +140,6 @@
     {
       "src": "./src/img/Icons/android/android-launchericon-48-48.png",
       "sizes": "48x48",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./src/img/Icons/ios/1024.png",
-      "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any"
     },
