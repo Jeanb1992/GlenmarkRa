@@ -1,7 +1,9 @@
 const CACHE_NAME = 'glenmark-ra-v1';
+const STATIC_CACHE = 'static-v1';
+const DYNAMIC_CACHE = 'dynamic-v1';
 
 // Lista de recursos a cachear
-const ASSETS_TO_CACHE = [
+const STATIC_ASSETS = [
   './',
   './index.html',
   './manifest.json',
@@ -87,16 +89,18 @@ const ASSETS_TO_CACHE = [
 // Instalación del Service Worker
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Cacheando recursos iniciales');
-        return cache.addAll(ASSETS_TO_CACHE);
-      })
-      .catch((error) => {
-        console.error('Error en la instalación del cache:', error);
-      })
+    Promise.all([
+      caches.open(STATIC_CACHE)
+        .then((cache) => {
+          console.log('Cacheando recursos estáticos');
+          return cache.addAll(STATIC_ASSETS);
+        }),
+      caches.open(DYNAMIC_CACHE)
+        .then((cache) => {
+          console.log('Cache dinámico creado');
+        })
+    ])
   );
-  // Forzar la activación inmediata
   self.skipWaiting();
 });
 
@@ -104,13 +108,11 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     Promise.all([
-      // Tomar el control inmediatamente
       clients.claim(),
-      // Limpiar caches antiguos
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
-            if (cacheName !== CACHE_NAME) {
+            if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
               console.log('Eliminando cache antiguo:', cacheName);
               return caches.delete(cacheName);
             }
@@ -121,56 +123,61 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Estrategia de cache: Cache First, luego Network
+// Función para limitar el tamaño del cache dinámico
+const limitCacheSize = (name, size) => {
+  caches.open(name).then(cache => {
+    cache.keys().then(keys => {
+      if (keys.length > size) {
+        cache.delete(keys[0]).then(limitCacheSize(name, size));
+      }
+    });
+  });
+};
+
+// Estrategia de cache: Network First, luego Cache
 self.addEventListener('fetch', (event) => {
-  // No interceptar peticiones a otros dominios excepto las CDN específicas
-  const allowedDomains = [
-    'unpkg.com',
-    'cdnjs.cloudflare.com'
-  ];
-  
   const url = new URL(event.request.url);
-  const isAllowedDomain = allowedDomains.some(domain => url.hostname.includes(domain));
+  const isAllowedDomain = ['unpkg.com', 'cdnjs.cloudflare.com'].some(domain => 
+    url.hostname.includes(domain)
+  );
   const isLocalRequest = url.origin === location.origin;
-  
+
+  // Solo manejar peticiones locales o de dominios permitidos
   if (!isAllowedDomain && !isLocalRequest) {
     return;
   }
 
   event.respondWith(
-    caches.match(event.request)
-      .then((cachedResponse) => {
-        if (cachedResponse) {
-          // Si está en cache, lo servimos desde ahí
-          return cachedResponse;
-        }
+    fetch(event.request)
+      .then((response) => {
+        // Clonar la respuesta para poder usarla múltiples veces
+        const responseToCache = response.clone();
 
-        // Si no está en cache, lo pedimos a la red
-        return fetch(event.request)
-          .then((networkResponse) => {
-            // Si la respuesta no es válida, la retornamos tal cual
-            if (!networkResponse || networkResponse.status !== 200) {
-              return networkResponse;
+        // Guardar en cache dinámico
+        caches.open(DYNAMIC_CACHE)
+          .then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+
+        // Limitar el tamaño del cache dinámico
+        limitCacheSize(DYNAMIC_CACHE, 15);
+
+        return response;
+      })
+      .catch(() => {
+        // Si falla la red, intentar servir desde cache
+        return caches.match(event.request)
+          .then((cachedResponse) => {
+            if (cachedResponse) {
+              return cachedResponse;
             }
 
-            // Clonamos la respuesta porque se consume al leerla
-            const responseToCache = networkResponse.clone();
-
-            // Guardamos en cache
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
-              });
-
-            return networkResponse;
-          })
-          .catch(() => {
-            // Si falla la red y es una petición de imagen o modelo 3D,
-            // devolvemos una imagen/modelo por defecto
+            // Si no está en cache y es una imagen, mostrar imagen offline
             if (event.request.destination === 'image') {
               return caches.match('./src/img/offline.png');
             }
-            // Para otros recursos, mostramos un error
+
+            // Para otros recursos, mostrar mensaje de error
             return new Response('Error de red. Por favor, verifica tu conexión.');
           });
       })
