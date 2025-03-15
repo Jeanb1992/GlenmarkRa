@@ -617,21 +617,7 @@
             animate: true
           });
           break;
-        case 19:
-          setupModel('model-cajas', './src/assets/3d/gltf/cajas.gltf', {
-            scale: 15.0,
-            position: { x: -0.15, y: -0.18, z: 0 },
-            animate: true
-          });
-          break;
-        case 20:
-          setupModel('model-cajas2', './src/assets/3d/gltf/cajas.gltf', {
-            scale: 15.0,
-            position: { x: -0.15, y: -0.18, z: 0 },
-            animate: true
-          
-          });
-          break;
+        
       }
 
       updateNavigationButtons();
@@ -1694,9 +1680,8 @@
         height: 100% !important;
     }
 
-    #model-grafico-wrapper,
-    #model-cajas-wrapper,
-    #model-cajas2-wrapper {
+    #model-grafico-wrapper
+     {
         position: absolute;
         width: 100%;
         height: 60vw;
@@ -1705,9 +1690,8 @@
         transform: translate(-50%, -50%);
     }
 
-    #model-grafico-wrapper canvas,
-    #model-cajas-wrapper canvas,
-    #model-cajas2-wrapper canvas {
+    #model-grafico-wrapper canvas
+     {
         width: 100% !important;
         height: 100% !important;
     }
@@ -2197,9 +2181,7 @@
           <img src="./src/img/Recurso (15).png" alt="Cajas 1">
           <img id="fda" src="./src/img/Recurso (28).png" alt="Recurso 28">
       </div>
-      <div id="model-cajas-wrapper" class="model-wrapper">
-          <div id="model-cajas" class="model-3d"></div>
-      </div>
+      
       <img src="./src/img/Recurso (14).png" alt="Ayuda" class="help-button" onclick="toggleHelp(19)">
       <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-19" onclick="toggleHelp(19)">
     </div>
@@ -2209,9 +2191,7 @@
           <img src="./src/img/Recurso (16).png" alt="Cajas 2">
           <img id="fda" src="./src/img/Recurso (28).png" alt="Recurso 28">
       </div>
-      <div id="model-cajas2-wrapper" class="model-wrapper">
-          <div id="model-cajas2" class="model-3d"></div>
-      </div>
+      
       <img src="./src/img/Recurso (14).png" alt="Ayuda" class="help-button" onclick="toggleHelp(20)">
       <img src="./src/img/Recurso (18).png" alt="Ayuda Info" class="help-info" id="help-info-20" onclick="toggleHelp(20)">
     </div>
